@@ -1,3 +1,5 @@
+//https://coreui.io/answers/how-to-protect-routes-in-react-router/
+
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 

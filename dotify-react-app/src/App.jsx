@@ -19,7 +19,7 @@ import SingleSong from "./screens/SingleSong";
 import CurrentPlaylist from "./screens/CurrentPlaylist";
 import About from "./screens/About";
 
-function AppContent() {
+function App() {
   const [showAbout, setShowAbout] = useState(false);
   const [count, setCount] = useState(0);
 
@@ -105,4 +105,4 @@ function AppContent() {
   
 }
 
-export default AppContent;
+export default App;
