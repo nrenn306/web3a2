@@ -37,13 +37,19 @@ export async function fetchAllGenreRows() {
 // Build lookup maps + sidebar lists from artists + genre rows
 function buildMaps(artistRes, genreRows) {
   const artistById = new Map();
+  const artistImageById = new Map();
   const catalogArtists = [];
   if (!artistRes.error && artistRes.data?.length) {
     for (const a of artistRes.data) {
+      const key = idKey(a.artist_id);
       const name = a.artist_name != null ? String(a.artist_name).trim() : "";
-      if (!name) continue;
-      artistById.set(idKey(a.artist_id), name);
-      catalogArtists.push({ id: idKey(a.artist_id), name });
+      if (name) {
+        artistById.set(key, name);
+        catalogArtists.push({ id: key, name });
+      }
+      const url =
+        a.artist_image_url != null ? String(a.artist_image_url).trim() : "";
+      if (url) artistImageById.set(key, url);
     }
     catalogArtists.sort((x, y) => x.name.localeCompare(y.name));
   }
@@ -55,13 +61,14 @@ function buildMaps(artistRes, genreRows) {
     catalogGenres.push(g.genre_name);
   }
 
-  return { artistById, catalogArtists, genreById, catalogGenres };
+  return { artistById, artistImageById, catalogArtists, genreById, catalogGenres };
 }
 
 // Raw song rows + maps -> objects the UI uses
-function toSongList(rows, artistById, genreById) {
+function toSongList(rows, artistById, genreById, artistImageById = new Map()) {
   return rows
     .map((row) => {
+      const aid = idKey(row.artist_id);
       const y =
         row.year != null && row.year !== "" ? Number(row.year) : null;
       const year = y != null && !Number.isNaN(y) ? y : null;
@@ -71,8 +78,9 @@ function toSongList(rows, artistById, genreById) {
         id: row.song_id != null ? String(row.song_id) : "",
         title: (row.title != null ? String(row.title) : "").trim() || "Untitled",
         year,
-        artistId: idKey(row.artist_id),
-        artistName: artistById.get(idKey(row.artist_id)) ?? "",
+        artistId: aid,
+        artistName: artistById.get(aid) ?? "",
+        artistImageUrl: artistImageById.get(aid) ?? "",
         genres: gname ? [gname] : [],
       };
     })
@@ -96,7 +104,9 @@ const CORE = "song_id, title, artist_id, genre_id, year";
 export async function loadMusicFromSupabase() {
   const [songRes, artistRes, genrePack] = await Promise.all([
     supabase.from("songs").select(FULL),
-    supabase.from("artists").select("artist_id, artist_name"),
+    supabase
+      .from("artists")
+      .select("artist_id, artist_name, artist_image_url"),
     fetchAllGenreRows(),
   ]);
 
@@ -115,11 +125,19 @@ export async function loadMusicFromSupabase() {
     };
   }
 
-  const { artistById, catalogArtists, genreById, catalogGenres } = buildMaps(
-    artistRes,
-    genrePack.rows
+  const {
+    artistById,
+    artistImageById,
+    catalogArtists,
+    genreById,
+    catalogGenres,
+  } = buildMaps(artistRes, genrePack.rows);
+  const songs = toSongList(
+    songsRes.data ?? [],
+    artistById,
+    genreById,
+    artistImageById
   );
-  const songs = toSongList(songsRes.data ?? [], artistById, genreById);
 
   return {
     songs,
@@ -142,11 +160,21 @@ async function loadSongsFiltered(eqColumn, eqValue) {
   }
 
   const [artistRes, genrePack] = await Promise.all([
-    supabase.from("artists").select("artist_id, artist_name"),
+    supabase
+      .from("artists")
+      .select("artist_id, artist_name, artist_image_url"),
     fetchAllGenreRows(),
   ]);
-  const { artistById, genreById } = buildMaps(artistRes, genrePack.rows);
-  const songs = toSongList(songRes.data ?? [], artistById, genreById);
+  const { artistById, artistImageById, genreById } = buildMaps(
+    artistRes,
+    genrePack.rows
+  );
+  const songs = toSongList(
+    songRes.data ?? [],
+    artistById,
+    genreById,
+    artistImageById
+  );
 
   return {
     songs,
@@ -237,17 +265,10 @@ export async function fetchSongPageData(songId) {
       .select("artist_id, artist_name, artist_image_url"),
     fetchAllGenreRows(),
   ]);
-  const { artistById, genreById } = buildMaps(artistRes, genrePack.rows);
-  const artistImageById = new Map();
-  if (!artistRes.error && artistRes.data?.length) {
-    for (const a of artistRes.data) {
-      const url =
-        a.artist_image_url != null
-          ? String(a.artist_image_url).trim()
-          : "";
-      if (url) artistImageById.set(idKey(a.artist_id), url);
-    }
-  }
+  const { artistById, artistImageById, genreById } = buildMaps(
+    artistRes,
+    genrePack.rows
+  );
   const joinNotice = joinWarnings(artistRes, genrePack);
 
   let songRes = await supabase
