@@ -1,6 +1,6 @@
 import {useState, useEffect} from "react";
-import CardGrid from "./CardGrid";
-import ArtistCard from "./ArtistCard.jsx";
+import CardGrid from "../components/CardGrid";
+import ArtistCard from "../components/ArtistCard.jsx";
 import supabase from "../services/supabase.js";
 import hero from "../assets/hero.jpg";
 

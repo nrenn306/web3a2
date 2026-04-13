@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 
-import SongFilterChips from "./SongFilterChips";
-import SongListTable from "./SongListTable";
-import SongsBrowseHeader from "./SongsBrowseHeader";
-import SongsFiltersSidebar from "./SongsFiltersSidebar";
-import { PlaylistToast, usePlaylistToast } from "./PlaylistToast";
+import SongFilterChips from "../components/SongFilterChips";
+import SongListTable from "../components/SongListTable";
+import SongsBrowseHeader from "../components/SongsBrowseHeader";
+import SongsFiltersSidebar from "../components/SongsFiltersSidebar";
+import { PlaylistToast, usePlaylistToast } from "../components/PlaylistToast";
 import { loadMusicFromSupabase } from "../services/musicData";
 
 function Songs() {

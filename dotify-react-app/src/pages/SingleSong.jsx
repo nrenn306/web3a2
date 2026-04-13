@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-import SongRadarChart from "./SongRadarChart";
-import { PlaylistToast, usePlaylistToast } from "./PlaylistToast";
+import SongRadarChart from "../components/SongRadarChart";
+import { PlaylistToast, usePlaylistToast } from "../components/PlaylistToast";
 import { fetchSongPageData } from "../services/musicData";
 
 // Pretty-print metric numbers on the detail page

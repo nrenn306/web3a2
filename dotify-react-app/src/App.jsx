@@ -8,19 +8,19 @@ import Footer from "./components/Footer";
 import UserLogin from "./components/UserLogin";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import Home from "./components/Home";
 import Artists from "./components/Artists";
 import Genres from "./components/Genres";
-import Playlists from "./components/Playlists";
-import Songs from "./components/Songs";
-import SingleArtist from "./components/SingleArtist";
-import SingleGenre from "./components/SingleGenre";
-import SingleSong from "./components/SingleSong";
-import CurrentPlaylist from "./components/CurrentPlaylist";
 import About from "./components/About";
+import Home from "./pages/Home";
+import Playlists from "./pages/Playlists";
+import Songs from "./pages/Songs";
+import SingleArtist from "./pages/SingleArtist";
+import SingleGenre from "./pages/SingleGenre";
+import SingleSong from "./pages/SingleSong";
+import CurrentPlaylist from "./pages/CurrentPlaylist";
 
 function App() {
-  // About screen: opened from footer, not from header
+  // About modal from footer
   const [showAbout, setShowAbout] = useState(false);
 
   return (
