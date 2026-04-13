@@ -2,34 +2,29 @@
 function SongsBrowseHeader({ loadNotice, sortBy, onSortChange }) {
   return (
     <>
-      <header className="text-center mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--dark)]">
+      <header className="mb-6 text-center">
+        <h1 className="text-2xl font-bold text-[var(--dark)] sm:text-3xl">
           Songs
         </h1>
-        <div
-          className="mx-auto mt-3 h-1 w-14 rounded-full bg-[var(--accent)]"
-          aria-hidden
-        />
       </header>
 
+      {/* e.g. partial join warning from loader */}
       {loadNotice ? (
         <div
           role="alert"
-          className="mb-6 rounded-xl border border-[var(--accent)]/35 bg-[color-mix(in_srgb,var(--accent)_10%,var(--white))] px-4 py-3 text-sm text-[var(--dark)] leading-relaxed shadow-sm"
+          className="mb-4 rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950"
         >
           {loadNotice}
         </div>
       ) : null}
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3 mb-6">
-        <label className="inline-flex items-center gap-2.5 text-sm text-[var(--muted)] sm:ml-auto">
-          <span className="font-semibold whitespace-nowrap text-[var(--dark)]">
-            Sort by
-          </span>
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+        <label className="inline-flex items-center gap-2 text-sm sm:ml-auto">
+          <span className="text-[var(--dark)]">Sort by</span>
           <select
             value={sortBy}
             onChange={(e) => onSortChange(e.target.value)}
-            className="cursor-pointer rounded-xl border border-[var(--dark)]/12 bg-[var(--white)] px-3.5 py-2 text-[var(--text)] text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent min-w-[10rem] transition-shadow hover:border-[var(--accent)]/40"
+            className="min-w-[10rem] rounded border border-gray-300 bg-white px-2 py-1 text-sm text-[var(--text)]"
           >
             <option value="title">Title</option>
             <option value="year">Year</option>

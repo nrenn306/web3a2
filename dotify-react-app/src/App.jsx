@@ -20,12 +20,12 @@ import CurrentPlaylist from "./screens/CurrentPlaylist";
 import About from "./screens/About";
 
 function App() {
+  // About screen: opened from footer, not from header
   const [showAbout, setShowAbout] = useState(false);
-  const [count, setCount] = useState(0);
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header count={count} />
+      <Header />
 
       <main className="flex-1">
         <Routes>
@@ -77,8 +77,7 @@ function App() {
           />
           <Route path="/current-playlist" element={
               <ProtectedRoute>
-                {/*will eventually be used for playlist count*/}
-                <CurrentPlaylist count={count} setCount={setCount} />
+                <CurrentPlaylist />
               </ProtectedRoute>
               }
           />

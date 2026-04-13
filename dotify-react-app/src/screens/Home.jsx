@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import hero from "../assets/hero.png";
 import { loadMusicFromSupabase } from "../services/musicData";
 
+// One tile in the Home featured grid
 function HomeSongCard({ song }) {
   const [imgFailed, setImgFailed] = useState(false);
   const letter =
@@ -15,33 +16,31 @@ function HomeSongCard({ song }) {
   return (
     <Link
       to={`/songs/${song.id}`}
-      className="group block rounded-2xl border border-[var(--dark)]/10 bg-[var(--white)] overflow-hidden shadow-md hover:shadow-lg hover:border-[var(--accent)]/35 transition-all"
+      className="block overflow-hidden rounded-lg border border-gray-200 bg-white hover:border-gray-400"
     >
-      <div className="aspect-[4/3] bg-[color-mix(in_srgb,var(--accent)_14%,var(--white))] overflow-hidden">
+      <div className="aspect-video overflow-hidden bg-gray-100">
         {showImg ? (
           <img
             src={song.artistImageUrl}
             alt=""
-            className="h-full w-full object-cover group-hover:scale-[1.04] transition-transform duration-300"
+            className="h-full w-full object-cover"
             onError={() => setImgFailed(true)}
           />
         ) : (
-          <div className="flex h-full min-h-[8rem] items-center justify-center text-5xl font-bold text-[var(--dark)]/20">
+          <div className="flex h-full min-h-[7rem] items-center justify-center text-4xl font-bold text-gray-300">
             {letter}
           </div>
         )}
       </div>
-      <div className="p-4 text-left">
-        <p className="font-bold text-[var(--dark)] leading-snug line-clamp-2 group-hover:text-[var(--accent)] transition-colors">
+      <div className="p-3 text-left">
+        <p className="line-clamp-2 font-semibold text-[var(--dark)]">
           {song.title}
         </p>
-        <p className="text-sm text-[var(--muted)] mt-1.5 line-clamp-1">
+        <p className="mt-1 line-clamp-1 text-sm text-[var(--muted)]">
           {song.artistName || "—"}
         </p>
         {song.year != null ? (
-          <p className="text-xs text-[var(--dark)]/45 mt-1 tabular-nums">
-            {song.year}
-          </p>
+          <p className="mt-1 text-xs tabular-nums text-gray-500">{song.year}</p>
         ) : null}
       </div>
     </Link>
@@ -53,6 +52,7 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // First dozen titles for the landing grid
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -77,31 +77,26 @@ function Home() {
 
   return (
     <div className="pb-16">
+      {/* Hero image + welcome line */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 text-center">
-        <div className="relative w-full overflow-hidden rounded-2xl shadow-lg border border-[var(--dark)]/10">
+        <div className="relative w-full overflow-hidden rounded-lg border border-gray-200">
           <img
             src={hero}
             alt=""
-            className="w-full max-h-[min(52vh,420px)] object-cover object-center"
+            className="max-h-72 w-full object-cover sm:max-h-96"
           />
-          <h1
-            className="absolute top-1/2 left-1/2 w-[90%] max-w-4xl -translate-x-1/2 -translate-y-1/2 text-white font-bold drop-shadow-lg leading-tight"
-            style={{ fontSize: "clamp(1.75rem, 6vw, 3.25rem)" }}
-          >
+          <h1 className="absolute left-1/2 top-1/2 w-[90%] max-w-3xl -translate-x-1/2 -translate-y-1/2 text-center text-2xl font-bold text-white drop-shadow sm:text-4xl">
             Welcome to Dotify
           </h1>
         </div>
       </div>
 
+      {/* Sample of catalog */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 mt-12 sm:mt-16">
-        <h2 className="text-2xl sm:text-3xl font-bold text-[var(--dark)] text-center tracking-tight">
+        <h2 className="text-center text-2xl font-bold text-[var(--dark)] sm:text-3xl">
           Featured songs
         </h2>
-        <div
-          className="mx-auto mt-3 h-1 w-12 rounded-full bg-[var(--accent)] mb-3"
-          aria-hidden
-        />
-        <p className="text-center text-sm text-[var(--muted)] mb-10 max-w-lg mx-auto">
+        <p className="mx-auto mb-8 mt-2 max-w-lg text-center text-sm text-[var(--muted)]">
           Songs from our library — open a card for the full song page.
         </p>
 
@@ -120,7 +115,7 @@ function Home() {
         )}
 
         {!loading && !error && songs.length > 0 && (
-          <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 list-none m-0 p-0">
+          <ul className="m-0 grid list-none grid-cols-2 gap-4 p-0 md:grid-cols-3 lg:grid-cols-4 md:gap-5">
             {songs.map((song) => (
               <li key={song.id}>
                 <HomeSongCard song={song} />

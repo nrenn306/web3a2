@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import SongListTable from "../components/SongListTable";
-import { PlaylistToast, usePlaylistToast } from "../hooks/usePlaylistToast";
+import { PlaylistToast, usePlaylistToast } from "../components/PlaylistToast";
 import { loadMusicFromSupabase } from "../services/musicData";
 
 function SingleArtist() {

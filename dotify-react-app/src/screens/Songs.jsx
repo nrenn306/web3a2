@@ -4,10 +4,11 @@ import SongFilterChips from "../components/SongFilterChips";
 import SongListTable from "../components/SongListTable";
 import SongsBrowseHeader from "../components/SongsBrowseHeader";
 import SongsFiltersSidebar from "../components/SongsFiltersSidebar";
-import { PlaylistToast, usePlaylistToast } from "../hooks/usePlaylistToast";
+import { PlaylistToast, usePlaylistToast } from "../components/PlaylistToast";
 import { loadMusicFromSupabase } from "../services/musicData";
 
 function Songs() {
+  // From Supabase
   const [songs, setSongs] = useState([]);
   const [loadState, setLoadState] = useState("loading");
   const [loadError, setLoadError] = useState(null);
@@ -15,6 +16,7 @@ function Songs() {
   const [catalogArtists, setCatalogArtists] = useState([]);
   const [catalogGenres, setCatalogGenres] = useState([]);
 
+  // Sidebar + chips state
   const [titleQuery, setTitleQuery] = useState("");
   const [selectedYears, setSelectedYears] = useState(() => new Set());
   const [selectedArtistNames, setSelectedArtistNames] = useState(
@@ -22,6 +24,7 @@ function Songs() {
   );
   const [selectedGenres, setSelectedGenres] = useState(() => new Set());
   const [sortBy, setSortBy] = useState("title");
+  // + column: save to target playlist + queue
   const { toast, addToPlaylist } = usePlaylistToast();
 
   // Flip one value in a Set used for filters
@@ -66,6 +69,7 @@ function Songs() {
     };
   }, []);
 
+  // Filter sidebar option lists
   const years = useMemo(
     () =>
       [
@@ -188,9 +192,10 @@ function Songs() {
     selectedArtistNames.size > 0 ||
     selectedGenres.size > 0;
 
+  // Filters left, results + table right
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
-      <div className="flex flex-col lg:flex-row gap-0 rounded-2xl border border-[var(--dark)]/10 bg-[var(--white)] shadow-md shadow-[var(--dark)]/5 overflow-hidden min-h-[min(70vh,560px)] ring-1 ring-[var(--dark)]/[0.06]">
+      <div className="flex min-h-[28rem] flex-col overflow-hidden rounded-lg border border-gray-200 bg-white lg:flex-row">
         <SongsFiltersSidebar
           songs={songs}
           titleQuery={titleQuery}
@@ -208,7 +213,7 @@ function Songs() {
           onToggleGenre={(g) => toggleSet(setSelectedGenres, g)}
         />
 
-        <section className="flex-1 min-w-0 bg-[color-mix(in_srgb,var(--dark)_4%,var(--white))] p-6 sm:p-8">
+        <section className="min-w-0 flex-1 bg-gray-50 p-6">
           <SongsBrowseHeader
             loadNotice={loadNotice}
             sortBy={sortBy}
