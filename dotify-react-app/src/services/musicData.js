@@ -192,6 +192,21 @@ export function fetchSongsByGenreId(genreId) {
   return loadSongsFiltered("genre_id", genreId);
 }
 
+// Fetch single artist by ID with type info from types table
+export async function fetchArtistById(artistId) {
+  const res = await supabase
+    .from("artists")
+    .select("*, types(type_id, type_name)")
+    .eq("artist_id", artistId)
+    .single();
+  
+  if (res.error) {
+    return { artist: null, error: res.error.message };
+  }
+  
+  return { artist: res.data, error: null };
+}
+
 // 0–1 or 0–100 from DB → 0–100 for charts
 const METRIC_KEYS = [
   "danceability",
