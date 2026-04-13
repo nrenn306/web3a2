@@ -8,16 +8,16 @@ import Footer from "./components/Footer";
 import UserLogin from "./components/UserLogin";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import Home from "./screens/Home";
-import Artists from "./screens/Artists";
-import Genres from "./screens/Genres";
-import Playlists from "./screens/Playlists";
-import Songs from "./screens/Songs";
-import SingleArtist from "./screens/SingleArtist";
-import SingleGenre from "./screens/SingleGenre";
-import SingleSong from "./screens/SingleSong";
-import CurrentPlaylist from "./screens/CurrentPlaylist";
-import About from "./screens/About";
+import Home from "./components/Home";
+import Artists from "./components/Artists";
+import Genres from "./components/Genres";
+import Playlists from "./components/Playlists";
+import Songs from "./components/Songs";
+import SingleArtist from "./components/SingleArtist";
+import SingleGenre from "./components/SingleGenre";
+import SingleSong from "./components/SingleSong";
+import CurrentPlaylist from "./components/CurrentPlaylist";
+import About from "./components/About";
 
 function App() {
   // About screen: opened from footer, not from header

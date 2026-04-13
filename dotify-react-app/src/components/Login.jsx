@@ -2,7 +2,7 @@
 //use navigate to change routes aka screens
 
 import { useNavigate } from "react-router-dom";
-import UserLogin from "../components/UserLogin.jsx";
+import UserLogin from "./UserLogin.jsx";
 
 function Login() {
 

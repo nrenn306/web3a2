@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
-import { PlaylistToast } from "../components/PlaylistToast";
+import { PlaylistToast } from "./PlaylistToast";
 import { removeSongIdFromQueue } from "../services/queueStorage";
 import {
   createPlaylist,
