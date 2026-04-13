@@ -1,8 +1,10 @@
 const CardGrid = ({data, Card}) => {
     return (
-        <div className="grid grid-cols-4">
+        <div className="grid grid-cols-5 gap-6 px-8">
             {data.map( entry => (
-                <Card key={entry.artist_id || entry.genre_id || entry.id} data={entry} />
+                <div key={entry.artist_id || entry.genre_id || entry.id} className="h-64">
+                    <Card data={entry} />
+                </div>
             ))}
         </div>
     );

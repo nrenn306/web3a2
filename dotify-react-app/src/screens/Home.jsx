@@ -85,7 +85,7 @@ function Home() {
             alt=""
             className="max-h-72 w-full object-cover sm:max-h-96"
           />
-          <h1 className="absolute left-1/2 top-1/2 w-[90%] max-w-3xl -translate-x-1/2 -translate-y-1/2 text-center text-2xl font-bold text-white drop-shadow sm:text-4xl">
+          <h1 className="absolute left-1/2 top-1/2 w-[90%] max-w-3xl -translate-x-1/2 -translate-y-1/2 text-center text-4xl font-bold text-white drop-shadow sm:text-6xl">
             Welcome to Dotify
           </h1>
         </div>
@@ -97,7 +97,7 @@ function Home() {
           Featured songs
         </h2>
         <p className="mx-auto mb-8 mt-2 max-w-lg text-center text-sm text-[var(--muted)]">
-          Songs from our library — open a card for the full song page.
+          Songs from our library. Click on a song below to view it's details.
         </p>
 
         {loading && (

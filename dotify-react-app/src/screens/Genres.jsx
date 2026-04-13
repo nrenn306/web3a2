@@ -19,10 +19,12 @@ const Genres = () => {
     }, []);
 
     return (
-        <section>
-            <div>
-                <img src={hero} alt="Hero" />
-                <h1>Genre</h1>
+        <section className="p-8">
+            <div className="relative mb-12 h-32">
+                <img src={hero} alt="Hero" className="h-full w-full object-cover rounded-lg shadow-lg" />
+                <div className="absolute inset-0 flex items-center justify-center rounded-lg">
+                    <h1 className="text-6xl font-bold text-white drop-shadow-lg">Genres</h1>
+                </div>
             </div>
             <CardGrid data={genres} Card={GenreCard} />
         </section>
