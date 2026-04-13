@@ -56,8 +56,8 @@ function About(props) {
 
                 <div className="mb-6">
                     <strong>GitHub Link</strong>
-                    <a href="https://github.com" className="text-[var(--accent)] no-underline ml-2">
-                        <p>TO DO ADD LINK</p>
+                    <a href="https://github.com/nrenn306/web3a2" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] no-underline ml-2">
+                        <p>github.com/nrenn306/web3a2</p>
                     </a>
                 </div>
 
