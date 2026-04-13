@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import SongRadarChart from "../components/SongRadarChart";
-import { PlaylistToast, usePlaylistToast } from "../hooks/usePlaylistToast";
+import { PlaylistToast, usePlaylistToast } from "../components/PlaylistToast";
 import { fetchSongPageData } from "../services/musicData";
 
+// Pretty-print metric numbers on the detail page
 function fmtNum(v, digits) {
   if (v == null || v === "") return "—";
   const n = Number(v);
@@ -21,9 +22,10 @@ function SingleSong() {
   const [related, setRelated] = useState([]);
   const [joinNotice, setJoinNotice] = useState(null);
   const [artistImgFailed, setArtistImgFailed] = useState(false);
+  // + button: target playlist + queue
   const { toast, addToPlaylist } = usePlaylistToast();
 
-  // Load song when URL id changes
+  // Refetch when /songs/:id changes
   useEffect(() => {
     let cancelled = false;
     setArtistImgFailed(false);
@@ -64,12 +66,14 @@ function SingleSong() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
+      {/* Fetch in progress */}
       {loadState === "loading" && (
         <p className="text-center text-[var(--muted)] py-16">Loading song…</p>
       )}
 
+      {/* Bad id or network */}
       {loadState === "error" && (
-        <div className="rounded-xl border border-[var(--red)]/30 bg-[var(--red)]/5 px-4 py-6 text-center text-[var(--dark)]">
+        <div className="rounded border border-red-200 bg-red-50 px-4 py-6 text-center text-[var(--dark)]">
           <p className="font-medium text-[var(--red)] mb-3">{error}</p>
           <Link
             to="/songs"
@@ -80,23 +84,21 @@ function SingleSong() {
         </div>
       )}
 
+      {/* Main song layout + related */}
       {loadState === "ready" && song && (
         <>
           {joinNotice && (
-            <div className="mb-6 rounded-xl border border-[var(--accent)]/35 bg-[color-mix(in_srgb,var(--accent)_10%,var(--white))] px-4 py-3 text-sm text-[var(--dark)] shadow-sm">
+            <div className="mb-4 rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
               {joinNotice}
             </div>
           )}
 
-          <div className="grid gap-10 lg:grid-cols-2 lg:gap-14 items-start mb-14">
+          {/* Text column | art + chart */}
+          <div className="mb-10 grid items-start gap-8 lg:grid-cols-2">
             <div className="min-w-0">
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--dark)] leading-tight">
+              <h1 className="text-3xl font-bold leading-tight text-[var(--dark)] sm:text-4xl">
                 {song.title}
               </h1>
-              <div
-                className="mt-3 h-1 w-14 rounded-full bg-[var(--accent)]"
-                aria-hidden
-              />
 
               <dl className="mt-8 space-y-5 text-[var(--text)]">
                 <div>
@@ -151,14 +153,15 @@ function SingleSong() {
                     artistName: song.artistName,
                   })
                 }
-                className="mt-8 inline-flex items-center justify-center rounded-xl border-2 border-[var(--accent)] bg-[var(--accent)] px-6 py-3 text-base font-bold text-[var(--black)] shadow-sm hover:bg-[var(--dark)] hover:border-[var(--dark)] hover:text-[var(--white)] transition-colors"
+                className="mt-6 inline-flex items-center justify-center rounded-lg border-2 border-[var(--accent)] bg-[var(--accent)] px-5 py-2.5 text-base font-bold text-[var(--black)] hover:bg-[var(--dark)] hover:border-[var(--dark)] hover:text-white"
               >
                 + Add to Playlist
               </button>
             </div>
 
+            {/* Artist image + radar */}
             <div className="flex flex-col items-center gap-8 lg:items-end">
-              <div className="w-full max-w-[16rem] aspect-square rounded-2xl border border-[var(--dark)]/10 bg-[color-mix(in_srgb,var(--accent)_14%,var(--white))] shadow-md overflow-hidden flex items-center justify-center">
+              <div className="flex aspect-square w-full max-w-xs items-center justify-center overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
                 {song.artistImageUrl && !artistImgFailed ? (
                   <img
                     src={song.artistImageUrl}
@@ -178,36 +181,33 @@ function SingleSong() {
                   </span>
                 )}
               </div>
-              <div className="w-full max-w-md rounded-2xl border border-[var(--dark)]/10 bg-[var(--white)] p-4 shadow-sm">
+              <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-4">
                 <SongRadarChart values={song.metrics} />
               </div>
             </div>
           </div>
 
-          <section className="border-t border-[var(--dark)]/10 pt-10">
-            <h2 className="text-center text-xl font-bold text-[var(--dark)] mb-2">
+          {/* Same metrics family as this track */}
+          <section className="border-t border-gray-200 pt-8">
+            <h2 className="mb-4 text-center text-xl font-bold text-[var(--dark)]">
               Related Songs
             </h2>
-            <div
-              className="mx-auto h-0.5 w-12 rounded-full bg-[var(--accent)] mb-8"
-              aria-hidden
-            />
             {related.length === 0 ? (
               <p className="text-center text-sm text-[var(--muted)]">
                 No related songs found.
               </p>
             ) : (
-              <ul className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
                 {related.map((r) => (
                   <li key={r.id}>
                     <Link
                       to={`/songs/${r.id}`}
-                      className="block h-full rounded-xl border border-[var(--dark)]/10 bg-[var(--white)] p-4 text-center shadow-sm transition-shadow hover:border-[var(--accent)]/40 hover:shadow-md"
+                      className="block h-full rounded border border-gray-200 bg-white p-3 text-center hover:border-gray-400"
                     >
-                      <span className="block text-sm font-semibold text-[var(--dark)] line-clamp-2 mb-2">
+                      <span className="mb-1 block line-clamp-2 text-sm font-medium text-[var(--dark)]">
                         {r.title}
                       </span>
-                      <span className="block text-xs text-[var(--muted)] line-clamp-2">
+                      <span className="block line-clamp-2 text-xs text-[var(--muted)]">
                         {r.artistName || "—"}
                       </span>
                     </Link>

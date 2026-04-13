@@ -9,30 +9,31 @@ function SongListTable({
   showFilterEmpty = false,
   onClearFilters,
   artistNameById = new Map(),
-  onAddToPlaylist,
+  onAddToPlaylist, // optional + column
   noRowsMessage = "No songs to show.",
 }) {
   const showAdd = typeof onAddToPlaylist === "function";
   const colSpan = showAdd ? 4 : 3;
 
+  // One table: header + body states + data rows
   return (
-    <div className="rounded-2xl border border-[var(--dark)]/10 bg-[var(--white)] overflow-hidden shadow-md shadow-[var(--dark)]/5 ring-1 ring-[var(--dark)]/[0.05]">
+    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
       <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left min-w-[520px]">
+        <table className="w-full min-w-[520px] text-left text-sm">
           <thead>
-            <tr className="border-b border-[var(--dark)]/10 bg-[color-mix(in_srgb,var(--dark)_6%,var(--white))]">
-              <th className="px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-[var(--dark)]">
+            <tr className="border-b border-gray-200 bg-gray-50">
+              <th className="px-4 py-2 font-semibold text-[var(--dark)]">
                 Title
               </th>
-              <th className="px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-[var(--dark)]">
+              <th className="px-4 py-2 font-semibold text-[var(--dark)]">
                 Artist
               </th>
-              <th className="px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-[var(--dark)] w-24">
+              <th className="px-4 py-2 font-semibold text-[var(--dark)] w-24">
                 Year
               </th>
               {showAdd ? (
                 <th
-                  className="px-5 py-3.5 w-16 text-center text-xs font-bold uppercase tracking-wider text-[var(--dark)]"
+                  className="w-16 px-4 py-2 text-center font-semibold text-[var(--dark)]"
                   aria-label="Add to playlist"
                 >
                   Add
@@ -40,12 +41,13 @@ function SongListTable({
               ) : null}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[var(--dark)]/[0.06]">
+          <tbody className="divide-y divide-gray-200">
+            {/* Loading / errors / empty states */}
             {loadState === "loading" && (
               <tr>
                 <td
                   colSpan={colSpan}
-                  className="px-5 py-16 text-center text-[var(--muted)]/80"
+                  className="px-4 py-12 text-center text-[var(--muted)]"
                 >
                   <span className="inline-flex items-center gap-2">
                     <span className="size-2 animate-pulse rounded-full bg-[var(--accent)]" />
@@ -58,7 +60,7 @@ function SongListTable({
               <tr>
                 <td
                   colSpan={colSpan}
-                  className="px-5 py-14 text-center text-[var(--red)] font-medium"
+                  className="px-4 py-12 text-center text-[var(--red)]"
                 >
                   {loadError}
                 </td>
@@ -68,7 +70,7 @@ function SongListTable({
               <tr>
                 <td
                   colSpan={colSpan}
-                  className="px-5 py-14 text-center text-[var(--muted)]/85"
+                  className="px-4 py-12 text-center text-[var(--muted)]"
                 >
                   No songs found in your database.
                 </td>
@@ -78,7 +80,7 @@ function SongListTable({
               <tr>
                 <td
                   colSpan={colSpan}
-                  className="px-5 py-14 text-center text-[var(--muted)]/85"
+                  className="px-4 py-12 text-center text-[var(--muted)]"
                 >
                   No songs match your filters. Try adjusting or{" "}
                   {onClearFilters ? (
@@ -103,59 +105,55 @@ function SongListTable({
                 <tr>
                   <td
                     colSpan={colSpan}
-                    className="px-5 py-14 text-center text-[var(--muted)]/85"
+                    className="px-4 py-12 text-center text-[var(--muted)]"
                   >
                     {noRowsMessage}
                   </td>
                 </tr>
               )}
+            {/* Filtered song rows */}
             {loadState === "ready" &&
               !showCatalogEmpty &&
               !showFilterEmpty &&
               rows.length > 0 &&
-              rows.map((song, i) => {
+              rows.map((song) => {
                 const artistLabel =
                   (song.artistName ?? "").trim() ||
                   artistNameById.get(String(song.artistId)) ||
                   "";
-                const stripe =
-                  i % 2 === 1 ? "bg-[color-mix(in_srgb,var(--dark)_3.5%,var(--white))]" : "";
                 return (
-                  <tr
-                    key={song.id}
-                    className={`${stripe} transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_7%,var(--white))]`}
-                  >
-                    <td className="px-5 py-3.5">
+                  <tr key={song.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-2">
                       <Link
                         to={`/songs/${song.id}`}
-                        className="font-medium text-[var(--accent)] hover:text-[var(--red)] hover:underline underline-offset-2"
+                        className="font-medium text-[var(--accent)] hover:text-[var(--red)] hover:underline"
                       >
                         {song.title}
                       </Link>
                     </td>
-                    <td className="px-5 py-3.5">
+                    <td className="px-4 py-2">
                       {song.artistId ? (
                         <Link
                           to={`/artists/${song.artistId}`}
-                          className="text-[var(--text)] hover:text-[var(--accent)] hover:underline underline-offset-2"
+                          className="text-[var(--text)] hover:text-[var(--accent)] hover:underline"
                         >
                           {artistLabel || "—"}
                         </Link>
                       ) : (
-                        <span className="text-[var(--muted)]/75">
+                        <span className="text-[var(--muted)]">
                           {artistLabel || "—"}
                         </span>
                       )}
                     </td>
-                    <td className="px-5 py-3.5 text-[var(--muted)]/80 tabular-nums">
+                    <td className="px-4 py-2 tabular-nums text-[var(--muted)]">
                       {song.year ?? "—"}
                     </td>
                     {showAdd ? (
-                      <td className="px-5 py-3.5 text-center">
+                      <td className="px-4 py-2 text-center">
                         <button
                           type="button"
                           onClick={() => onAddToPlaylist(song)}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--dark)]/15 bg-[var(--white)] text-lg font-light leading-none text-[var(--dark)] shadow-sm hover:bg-[var(--accent)] hover:text-[var(--black)] hover:border-[var(--accent)] hover:shadow-md transition-all active:scale-95"
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--accent)] bg-[var(--accent)] text-lg text-[var(--black)] hover:bg-[var(--dark)] hover:border-[var(--dark)] hover:text-white"
                           aria-label={`Add ${song.title} to playlist`}
                         >
                           +
