@@ -2,7 +2,7 @@
  * About popup showing information and git link
  */
 import { useEffect, useRef } from 'react';
-import dotifylogo from '../assets/dotifylogo.png';
+import dotifylogo from '../assets/dotifyLogo.png';
 
 function About(props) {
 
