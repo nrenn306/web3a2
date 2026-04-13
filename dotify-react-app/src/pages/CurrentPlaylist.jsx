@@ -12,7 +12,7 @@ function sameId(a, b) {
 // Uses session target = same playlist as + on Songs
 function CurrentPlaylist() {
   const { user } = useAuth();
-  const userId = user?.id ?? null;
+  const userId = user.id;
   const [items, setItems] = useState([]);
   const [playlistName, setPlaylistName] = useState("");
 
@@ -75,14 +75,6 @@ function CurrentPlaylist() {
   }
 
   const linkClass = "text-[var(--accent)] font-medium hover:text-[var(--red)] hover:underline underline-offset-2";
-
-  if (!user) {
-    return (
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center text-[var(--muted)]">
-        <p>Log in to see your current playlist.</p>
-      </div>
-    );
-  }
 
   if (typeof sessionStorage === "undefined" || !sessionStorage.getItem(TARGET_PLAYLIST_STORAGE_KEY)) {
     return (

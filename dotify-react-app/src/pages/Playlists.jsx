@@ -12,8 +12,8 @@ function sameId(a, b) {
 }
 
 function Playlists() {
-  const { user, loading: authLoading } = useAuth();
-  const userId = user?.id ?? null;
+  const { user } = useAuth();
+  const userId = user.id;
 
   const [playlists, setPlaylists] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
@@ -94,8 +94,6 @@ function Playlists() {
 
   // New login → clear selection + target
   useEffect(() => {
-    if (authLoading) return;
-
     const prev = prevUserIdRef.current;
     const next = userId ?? null;
 
@@ -110,7 +108,7 @@ function Playlists() {
     }
 
     prevUserIdRef.current = next;
-  }, [userId, authLoading]);
+  }, [userId]);
 
   const reload = useCallback(async () => {
     if (!userId) {
@@ -139,7 +137,7 @@ function Playlists() {
   useEffect(() => {
     let cancelled = false;
 
-    if (!userId || authLoading || typeof sessionStorage === "undefined") return;
+    if (!userId || typeof sessionStorage === "undefined") return;
 
     (async () => {
       let list;
@@ -187,7 +185,7 @@ function Playlists() {
       cancelled = true;
     };
 
-  }, [userId, authLoading, playlists, selectedId]);
+  }, [userId, playlists, selectedId]);
 
   // Escape closes delete dialog
   useEffect(() => {
@@ -284,24 +282,6 @@ function Playlists() {
 
   const selectedPlaylist = playlists.find((p) => sameId(p.id, selectedId));
   const linkClass = "text-[var(--accent)] font-medium hover:text-[var(--red)] hover:underline underline-offset-2";
-
-  // Auth still resolving
-  if (authLoading) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 text-center text-[var(--muted)]">
-        <p>Loading…</p>
-      </div>
-    );
-  }
-
-  // Route is protected but guard just in case
-  if (!user) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 text-center text-[var(--muted)]">
-        <p>Log in to see and edit your playlists.</p>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
