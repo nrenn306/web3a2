@@ -143,6 +143,7 @@ export async function loadMusicFromSupabase() {
     songs,
     catalogArtists,
     catalogGenres,
+    genreRows: genrePack.rows,
     songError: null,
     joinNotice: joinWarnings(artistRes, genrePack),
   };
