@@ -12,7 +12,7 @@ function fmtNum(v, digits) {
   const n = Number(v);
 
   if (Number.isNaN(n)) return "—";
-  
+
   if (digits) return n.toFixed(digits);
 
   return String(Math.round(n));
@@ -26,6 +26,8 @@ function SingleSong() {
   const [related, setRelated] = useState([]);
   const [joinNotice, setJoinNotice] = useState(null);
   const [artistImgFailed, setArtistImgFailed] = useState(false);
+
+  // + button: target playlist + queue
   const { toast, addToPlaylist } = usePlaylistToast();
 
   // Refetch when /songs/:id changes
@@ -53,10 +55,10 @@ function SingleSong() {
         setSong(r.song);
         setRelated(r.related || []);
         setLoadState("ready");
+
       })
       .catch(() => {
         if (cancelled) return;
-
         setError("Could not load song.");
         setLoadState("error");
       });
@@ -72,11 +74,11 @@ function SingleSong() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
+      
+      {/* Fetch in progress */}
+      {loadState === "loading" && (<p className="text-center text-[var(--muted)] py-16">Loading song…</p>)}
 
-      {loadState === "loading" && (
-        <p className="text-center text-[var(--muted)] py-16">Loading song…</p>
-      )}
-
+      {/* Bad id or network */}
       {loadState === "error" && (
         <div className="rounded border border-red-200 bg-red-50 px-4 py-6 text-center text-[var(--dark)]">
           <p className="font-medium text-[var(--red)] mb-3">{error}</p>
@@ -86,13 +88,16 @@ function SingleSong() {
         </div>
       )}
 
+
       {/* Main song layout + related */}
       {loadState === "ready" && song && (
+
         <>
           {joinNotice && (
-            <div className="mb-4 rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">{joinNotice}</div>
+            <div className="mb-4 rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
+              {joinNotice}
+            </div>
           )}
-
 
           {/* Text column | art + chart */}
           <div className="mb-10 grid items-start gap-8 lg:grid-cols-2">
@@ -122,9 +127,7 @@ function SingleSong() {
                   <dt className={labelClass}>Genre</dt>
                   <dd className="text-lg">
                     {song.genreId ? (
-                      <Link to={`/genres/${song.genreId}`} className={linkClass}>
-                        {song.genreName}
-                      </Link>
+                      <Link to={`/genres/${song.genreId}`} className={linkClass}>{song.genreName}</Link>
                     ) : (
                       song.genreName
                     )}
@@ -139,7 +142,6 @@ function SingleSong() {
                     {fmtNum(song.loudness, 1)} dB
                   </dd>
                 </div>
-
               </dl>
 
               <button
@@ -176,9 +178,11 @@ function SingleSong() {
                   </span>
                 )}
               </div>
+
               <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-4">
                 <SongRadarChart values={song.metrics} />
               </div>
+              
             </div>
           </div>
 
@@ -187,10 +191,9 @@ function SingleSong() {
           <section className="border-t border-gray-200 pt-8">
             <h2 className="mb-4 text-center text-xl font-bold text-[var(--dark)]">Related Songs</h2>
             {related.length === 0 ? (
-              <p className="text-center text-sm text-[var(--muted)]">
-                No related songs found.
-              </p>
+              <p className="text-center text-sm text-[var(--muted)]">No related songs found.</p>
             ) : (
+
               <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
                 {related.map((r) => (
                   <li key={r.id}>
@@ -199,11 +202,13 @@ function SingleSong() {
                       <span className="block line-clamp-2 text-xs text-[var(--muted)]">{r.artistName || "—"}</span>
                     </Link>
                   </li>
+
                 ))}
+
               </ul>
             )}
-          </section>
 
+          </section>
         </>
       )}
 

@@ -3,9 +3,11 @@ import { useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { addSongToPlaylistWithQueue } from "../services/playlistStorage";
 
+
 // Fixed toast bar (Songs / SingleSong / Playlists)
 export function PlaylistToast({ message }) {
   if (!message) return null;
+
   return (
     <div
       role="status"
@@ -30,15 +32,19 @@ export function usePlaylistToast() {
 
   function showToast(msg) {
     setToast(msg);
+
     if (timer.current) clearTimeout(timer.current);
+
     timer.current = setTimeout(() => {
       setToast(null);
       timer.current = null;
     }, 3200);
+
   }
 
   async function addToPlaylist(song) {
     const msg = await addSongToPlaylistWithQueue(user?.id ?? null, song);
+    
     if (msg) showToast(msg);
   }
 

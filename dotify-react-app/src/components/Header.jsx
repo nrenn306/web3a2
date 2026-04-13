@@ -5,15 +5,11 @@ import { Link } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
 import dotifyLogo from "../assets/dotifyLogo.png";
-import {
-  getPlaylistSongs,
-  SAVED_PLAYLIST_STORAGE_EVENT,
-  TARGET_PLAYLIST_EVENT,
-  TARGET_PLAYLIST_STORAGE_KEY,
-} from "../services/playlistStorage";
+import { getPlaylistSongs, SAVED_PLAYLIST_STORAGE_EVENT, TARGET_PLAYLIST_EVENT, TARGET_PLAYLIST_STORAGE_KEY, } from "../services/playlistStorage";
 
 function Header() {
   const { user, logout } = useAuth();
+
   // Badge: song count for session target playlist
   const [currentPlaylistCount, setCurrentPlaylistCount] = useState(0);
 
@@ -21,15 +17,19 @@ function Header() {
   useEffect(() => {
     function updateCount() {
       const uid = user?.id;
+
       if (!uid || typeof sessionStorage === "undefined") {
         setCurrentPlaylistCount(0);
         return;
       }
+
       const targetId = sessionStorage.getItem(TARGET_PLAYLIST_STORAGE_KEY);
+
       if (!targetId) {
         setCurrentPlaylistCount(0);
         return;
       }
+
       getPlaylistSongs(uid, targetId)
         .then((songs) => {
           setCurrentPlaylistCount(Array.isArray(songs) ? songs.length : 0);
@@ -40,6 +40,7 @@ function Header() {
     updateCount();
     window.addEventListener(SAVED_PLAYLIST_STORAGE_EVENT, updateCount);
     window.addEventListener(TARGET_PLAYLIST_EVENT, updateCount);
+    
     return () => {
       window.removeEventListener(SAVED_PLAYLIST_STORAGE_EVENT, updateCount);
       window.removeEventListener(TARGET_PLAYLIST_EVENT, updateCount);

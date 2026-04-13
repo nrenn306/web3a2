@@ -9,4 +9,5 @@ const CardGrid = ({data, Card}) => {
         </div>
     );
 };
+
 export default CardGrid;

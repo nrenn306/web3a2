@@ -25,12 +25,15 @@ function Songs() {
 
   const [selectedGenres, setSelectedGenres] = useState(() => new Set());
   const [sortBy, setSortBy] = useState("title");
+
+  // + column: save to target playlist + queue
   const { toast, addToPlaylist } = usePlaylistToast();
 
   // Flip one value in a Set used for filters
   function toggleSet(setState, value) {
     setState((prev) => {
       const next = new Set(prev);
+
       if (next.has(value)) next.delete(value);
 
       else next.add(value);
@@ -76,10 +79,12 @@ function Songs() {
 
   }, []);
 
+
   // Filter sidebar option lists
   const years = useMemo(() =>
-    [...new Set(songs.map((s) => s.year).filter((y) => y != null && !Number.isNaN(y))),].sort((a, b) => a - b),[songs]
+      [...new Set(songs.map((s) => s.year).filter((y) => y != null && !Number.isNaN(y))),].sort((a, b) => a - b),[songs]
   );
+
 
   const artistFilterNames = useMemo(() => {
     const names = new Set();
@@ -104,9 +109,8 @@ function Songs() {
 
   }, [catalogGenres, songs]);
 
-  const artistNameById = useMemo(() => 
-    new Map(catalogArtists.map((a) => [String(a.id), a.name])),[catalogArtists]
-  );
+
+  const artistNameById = useMemo(() => new Map(catalogArtists.map((a) => [String(a.id), a.name])), [catalogArtists]);
 
 
   // Apply sidebar filters + sort
@@ -156,7 +160,6 @@ function Songs() {
         );
 
       return a.title.localeCompare(b.title);
-
     });
 
     return list;
@@ -169,6 +172,7 @@ function Songs() {
     selectedGenres,
     sortBy,
   ]);
+
 
   // Active filters shown as removable chips
   const chips = [];
@@ -212,7 +216,11 @@ function Songs() {
     setSelectedGenres(new Set());
   }
 
-  const hasActiveFilters = Boolean(titleQuery.trim()) || selectedYears.size > 0 || selectedArtistNames.size > 0 || selectedGenres.size > 0;
+  const hasActiveFilters =
+    Boolean(titleQuery.trim()) ||
+    selectedYears.size > 0 ||
+    selectedArtistNames.size > 0 ||
+    selectedGenres.size > 0;
 
   // Filters left, results + table right
   return (
@@ -227,7 +235,9 @@ function Songs() {
           onToggleYear={(y) => toggleSet(setSelectedYears, y)}
           artistFilterNames={artistFilterNames}
           selectedArtistNames={selectedArtistNames}
-          onToggleArtistName={(name) => toggleSet(setSelectedArtistNames, name)}
+          onToggleArtistName={(name) =>
+            toggleSet(setSelectedArtistNames, name)
+          }
           genreFilterOptions={genreFilterOptions}
           selectedGenres={selectedGenres}
           onToggleGenre={(g) => toggleSet(setSelectedGenres, g)}
@@ -242,18 +252,26 @@ function Songs() {
             rows={filteredSorted}
             loadState={loadState}
             loadError={loadError}
-            showCatalogEmpty={loadState === "ready" && songs.length === 0}
-            showFilterEmpty={loadState === "ready" && songs.length > 0 && filteredSorted.length === 0}
+            showCatalogEmpty={
+              loadState === "ready" && songs.length === 0
+            }
+            showFilterEmpty={
+              loadState === "ready" &&
+              songs.length > 0 &&
+              filteredSorted.length === 0
+            }
             onClearFilters={clearAllFilters}
             artistNameById={artistNameById}
             onAddToPlaylist={addToPlaylist}
           />
         </section>
+
       </div>
 
       <PlaylistToast message={toast} />
     </div>
   );
 }
+
 
 export default Songs;

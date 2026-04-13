@@ -2,11 +2,13 @@
 function SongFilterChips({ chips, hasActiveFilters, onClearAll }) {
   return (
     <div className="mb-4 rounded-lg border border-gray-200 bg-white p-3">
+
       {/* Header row */}
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <span className="text-sm font-semibold text-[var(--dark)]">
           Results
         </span>
+
         {hasActiveFilters ? (
           <button
             type="button"
@@ -17,6 +19,7 @@ function SongFilterChips({ chips, hasActiveFilters, onClearAll }) {
           </button>
         ) : null}
       </div>
+
       {/* Each chip calls remove() for that filter */}
       {chips.length > 0 ? (
         <div className="flex flex-wrap gap-2">
@@ -29,9 +32,7 @@ function SongFilterChips({ chips, hasActiveFilters, onClearAll }) {
               aria-label={`Remove filter ${c.label}`}
             >
               <span>{c.label}</span>
-              <span className="text-gray-500" aria-hidden>
-                ×
-              </span>
+              <span className="text-gray-500" aria-hidden>×</span>
             </button>
           ))}
         </div>

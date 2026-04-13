@@ -20,17 +20,12 @@ function SongListTable({
     <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[520px] text-left text-sm">
+
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
-              <th className="px-4 py-2 font-semibold text-[var(--dark)]">
-                Title
-              </th>
-              <th className="px-4 py-2 font-semibold text-[var(--dark)]">
-                Artist
-              </th>
-              <th className="px-4 py-2 font-semibold text-[var(--dark)] w-24">
-                Year
-              </th>
+              <th className="px-4 py-2 font-semibold text-[var(--dark)]">Title</th>
+              <th className="px-4 py-2 font-semibold text-[var(--dark)]">Artist</th>
+              <th className="px-4 py-2 font-semibold text-[var(--dark)] w-24">Year</th>
               {showAdd ? (
                 <th
                   className="w-16 px-4 py-2 text-center font-semibold text-[var(--dark)]"
@@ -41,47 +36,37 @@ function SongListTable({
               ) : null}
             </tr>
           </thead>
+
           <tbody className="divide-y divide-gray-200">
-            {/* Loading / errors / empty states */}
+            
             {loadState === "loading" && (
               <tr>
-                <td
-                  colSpan={colSpan}
-                  className="px-4 py-12 text-center text-[var(--muted)]"
-                >
+                <td colSpan={colSpan} className="px-4 py-12 text-center text-[var(--muted)]">
                   <span className="inline-flex items-center gap-2">
-                    <span className="size-2 animate-pulse rounded-full bg-[var(--accent)]" />
-                    Loading songs…
-                  </span>
+                    <span className="size-2 animate-pulse rounded-full bg-[var(--accent)]" />Loading songs…</span>
                 </td>
               </tr>
             )}
+
             {loadState === "error" && (
               <tr>
-                <td
-                  colSpan={colSpan}
-                  className="px-4 py-12 text-center text-[var(--red)]"
-                >
+                <td colSpan={colSpan} className="px-4 py-12 text-center text-[var(--red)]">
                   {loadError}
                 </td>
               </tr>
             )}
+
             {loadState === "ready" && showCatalogEmpty && (
               <tr>
-                <td
-                  colSpan={colSpan}
-                  className="px-4 py-12 text-center text-[var(--muted)]"
-                >
+                <td colSpan={colSpan} className="px-4 py-12 text-center text-[var(--muted)]">
                   No songs found in your database.
                 </td>
               </tr>
             )}
+
             {loadState === "ready" && showFilterEmpty && (
               <tr>
-                <td
-                  colSpan={colSpan}
-                  className="px-4 py-12 text-center text-[var(--muted)]"
-                >
+                <td colSpan={colSpan} className="px-4 py-12 text-center text-[var(--muted)]">
                   No songs match your filters. Try adjusting or{" "}
                   {onClearFilters ? (
                     <button
@@ -98,56 +83,39 @@ function SongListTable({
                 </td>
               </tr>
             )}
-            {loadState === "ready" &&
-              !showCatalogEmpty &&
-              !showFilterEmpty &&
-              rows.length === 0 && (
+
+            {loadState === "ready" && !showCatalogEmpty && !showFilterEmpty && rows.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={colSpan}
-                    className="px-4 py-12 text-center text-[var(--muted)]"
-                  >
+                  <td colSpan={colSpan} className="px-4 py-12 text-center text-[var(--muted)]">
                     {noRowsMessage}
                   </td>
                 </tr>
               )}
+
             {/* Filtered song rows */}
-            {loadState === "ready" &&
-              !showCatalogEmpty &&
-              !showFilterEmpty &&
-              rows.length > 0 &&
-              rows.map((song) => {
-                const artistLabel =
-                  (song.artistName ?? "").trim() ||
-                  artistNameById.get(String(song.artistId)) ||
-                  "";
+            {loadState === "ready" && !showCatalogEmpty && !showFilterEmpty && rows.length > 0 && rows.map((song) => {
+                const artistLabel = (song.artistName ?? "").trim() || artistNameById.get(String(song.artistId)) || "";
+
                 return (
                   <tr key={song.id} className="hover:bg-gray-50">
                     <td className="px-4 py-2">
-                      <Link
-                        to={`/songs/${song.id}`}
-                        className="font-medium text-[var(--accent)] hover:text-[var(--red)] hover:underline"
-                      >
+                      <Link to={`/songs/${song.id}`} className="font-medium text-[var(--accent)] hover:text-[var(--red)] hover:underline">
                         {song.title}
                       </Link>
                     </td>
+
                     <td className="px-4 py-2">
                       {song.artistId ? (
-                        <Link
-                          to={`/artists/${song.artistId}`}
-                          className="text-[var(--text)] hover:text-[var(--accent)] hover:underline"
-                        >
+                        <Link to={`/artists/${song.artistId}`} className="text-[var(--text)] hover:text-[var(--accent)] hover:underline">
                           {artistLabel || "—"}
                         </Link>
                       ) : (
-                        <span className="text-[var(--muted)]">
-                          {artistLabel || "—"}
-                        </span>
+                        <span className="text-[var(--muted)]">{artistLabel || "—"}</span>
                       )}
                     </td>
-                    <td className="px-4 py-2 tabular-nums text-[var(--muted)]">
-                      {song.year ?? "—"}
-                    </td>
+
+                    <td className="px-4 py-2 tabular-nums text-[var(--muted)]">{song.year ?? "—"}</td>
+
                     {showAdd ? (
                       <td className="px-4 py-2 text-center">
                         <button
@@ -161,6 +129,7 @@ function SongListTable({
                       </td>
                     ) : null}
                   </tr>
+
                 );
               })}
           </tbody>
@@ -169,5 +138,6 @@ function SongListTable({
     </div>
   );
 }
+
 
 export default SongListTable;

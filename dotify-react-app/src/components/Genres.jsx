@@ -15,7 +15,9 @@ const Genres = () => {
                 .select("*");
             setGenres(data);
         };
+
         fetchGenres();
+        
     }, []);
 
     return (

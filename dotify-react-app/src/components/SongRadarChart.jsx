@@ -25,6 +25,7 @@ function SongRadarChart({ values }) {
   const dataPoints = AXES.map((a, i) =>
     point(i, values?.[a.key] ?? 0)
   );
+
   const dataStr = dataPoints.map(([x, y]) => `${x},${y}`).join(" ");
 
   return (
@@ -33,73 +34,51 @@ function SongRadarChart({ values }) {
         {GRID_LEVELS.map((pct) => {
           const pts = AXES.map((_, i) => {
             const [x, y] = point(i, pct);
+
             return `${x},${y}`;
+
           }).join(" ");
+
           return (
-            <polygon
-              key={pct}
-              points={pts}
-              fill="none"
-              stroke="var(--dark)"
-              strokeOpacity={0.12}
-              strokeWidth={1}
-            />
+            <polygon key={pct} points={pts} fill="none" stroke="var(--dark)" strokeOpacity={0.12} strokeWidth={1}/>
           );
+
         })}
+
         {AXES.map((_, i) => {
           const [x, y] = point(i, 100);
+
           return (
-            <line
-              key={i}
-              x1={cx}
-              y1={cy}
-              x2={x}
-              y2={y}
-              stroke="var(--dark)"
-              strokeOpacity={0.15}
-              strokeWidth={1}
-            />
+            <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="var(--dark)" strokeOpacity={0.15} strokeWidth={1}/>
           );
         })}
-        <polygon
-          points={dataStr}
-          fill="var(--accent)"
-          fillOpacity={0.35}
-          stroke="var(--accent)"
-          strokeWidth={2}
-        />
+
+        <polygon points={dataStr} fill="var(--accent)" fillOpacity={0.35} stroke="var(--accent)" strokeWidth={2}/>
+
         {AXES.map((a, i) => {
           const angle = -Math.PI / 2 + (i * 2 * Math.PI) / AXES.length;
           const lx = cx + labelR * Math.cos(angle);
           const ly = cy + labelR * Math.sin(angle);
-          const anchor =
-            Math.abs(Math.cos(angle)) < 0.2
-              ? "middle"
-              : Math.cos(angle) > 0
-                ? "start"
-                : "end";
+
+          const anchor = Math.abs(Math.cos(angle)) < 0.2 ? "middle" : Math.cos(angle) > 0 ? "start" : "end";
+
           const baseline = Math.sin(angle) > 0.35 ? "hanging" : "auto";
+
           return (
-            <text
-              key={a.key}
-              x={lx}
-              y={ly}
-              textAnchor={anchor}
-              dominantBaseline={baseline}
-              fill="var(--dark)"
-              fontSize="10"
-              fontWeight="600"
-            >
+            <text key={a.key} x={lx} y={ly} textAnchor={anchor} dominantBaseline={baseline} fill="var(--dark)" fontSize="10" fontWeight="600">
               {a.label}
             </text>
           );
         })}
+
       </svg>
+
       <p className="text-center text-xs text-[var(--muted)] mt-2 opacity-80">
         Rings from center: 20%, 40%, 60%, 80%, outer edge 100%
       </p>
     </div>
   );
 }
+
 
 export default SongRadarChart;

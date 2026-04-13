@@ -15,6 +15,7 @@ const Artists = () => {
                 .select("*");
             setArtists(data);
         };
+        
         fetchArtists();
     }, []);
 

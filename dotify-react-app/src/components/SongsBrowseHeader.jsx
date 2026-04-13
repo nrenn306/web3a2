@@ -3,17 +3,12 @@ function SongsBrowseHeader({ loadNotice, sortBy, onSortChange }) {
   return (
     <>
       <header className="mb-6 text-center">
-        <h1 className="text-2xl font-bold text-[var(--dark)] sm:text-3xl">
-          Songs
-        </h1>
+        <h1 className="text-2xl font-bold text-[var(--dark)] sm:text-3xl">Songs</h1>
       </header>
 
       {/* e.g. partial join warning from loader */}
       {loadNotice ? (
-        <div
-          role="alert"
-          className="mb-4 rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950"
-        >
+        <div role="alert" className="mb-4 rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
           {loadNotice}
         </div>
       ) : null}
@@ -35,5 +30,6 @@ function SongsBrowseHeader({ loadNotice, sortBy, onSortChange }) {
     </>
   );
 }
+
 
 export default SongsBrowseHeader;

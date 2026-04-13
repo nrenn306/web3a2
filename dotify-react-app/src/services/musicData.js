@@ -3,6 +3,7 @@ import supabase from "./supabase";
 // Turn DB ids into strings so Map lookups always match
 function idKey(v) {
   if (v == null || v === "") return "";
+
   return String(v).trim();
 }
 
@@ -14,11 +15,14 @@ export async function fetchAllGenreRows() {
   ]);
 
   const byId = new Map();
+
   for (const res of [g1, g2]) {
     if (res.error || !res.data?.length) continue;
+
     for (const row of res.data) {
       const id = idKey(row.genre_id);
       const name = row.genre_name != null ? String(row.genre_name).trim() : "";
+
       if (id && name) byId.set(id, { genre_id: row.genre_id, genre_name: name });
     }
   }
@@ -28,9 +32,11 @@ export async function fetchAllGenreRows() {
   );
 
   let error = null;
+
   if (g1.error && g2.error) {
     error = `Could not load genre tables: ${g1.error.message}. Check RLS on genres/genre.`;
   }
+
   return { rows, error };
 }
 
@@ -39,23 +45,28 @@ function buildMaps(artistRes, genreRows) {
   const artistById = new Map();
   const artistImageById = new Map();
   const catalogArtists = [];
+
   if (!artistRes.error && artistRes.data?.length) {
     for (const a of artistRes.data) {
       const key = idKey(a.artist_id);
       const name = a.artist_name != null ? String(a.artist_name).trim() : "";
+
       if (name) {
         artistById.set(key, name);
         catalogArtists.push({ id: key, name });
       }
-      const url =
-        a.artist_image_url != null ? String(a.artist_image_url).trim() : "";
+
+      const url = a.artist_image_url != null ? String(a.artist_image_url).trim() : "";
+
       if (url) artistImageById.set(key, url);
     }
+
     catalogArtists.sort((x, y) => x.name.localeCompare(y.name));
   }
 
   const genreById = new Map();
   const catalogGenres = [];
+
   for (const g of genreRows) {
     genreById.set(idKey(g.genre_id), g.genre_name);
     catalogGenres.push(g.genre_name);
@@ -69,15 +80,13 @@ function toSongList(rows, artistById, genreById, artistImageById = new Map()) {
   return rows
     .map((row) => {
       const aid = idKey(row.artist_id);
-      const y =
-        row.year != null && row.year !== "" ? Number(row.year) : null;
+      const y = row.year != null && row.year !== "" ? Number(row.year) : null;
       const year = y != null && !Number.isNaN(y) ? y : null;
       const gname = genreById.get(idKey(row.genre_id)) ?? "";
 
       return {
         id: row.song_id != null ? String(row.song_id) : "",
-        title: (row.title != null ? String(row.title) : "").trim() || "Untitled",
-        year,
+        title: (row.title != null ? String(row.title) : "").trim() || "Untitled", year,
         artistId: aid,
         artistName: artistById.get(aid) ?? "",
         artistImageUrl: artistImageById.get(aid) ?? "",
@@ -89,16 +98,19 @@ function toSongList(rows, artistById, genreById, artistImageById = new Map()) {
 
 function joinWarnings(artistRes, genrePack) {
   const parts = [];
+
   if (artistRes.error) {
     parts.push(`Artists table: ${artistRes.error.message} (check RLS).`);
   }
+
   if (genrePack.error) parts.push(genrePack.error);
+
   return parts.length ? parts.join(" ") : null;
 }
 
-const FULL =
-  "song_id, title, artist_id, genre_id, year, bpm, energy, danceability, loudness, liveness, valence, duration, acousticness, speechiness, popularity";
+const FULL = "song_id, title, artist_id, genre_id, year, bpm, energy, danceability, loudness, liveness, valence, duration, acousticness, speechiness, popularity";
 const CORE = "song_id, title, artist_id, genre_id, year";
+
 
 // All songs for browse page + artist/genre names for filters
 export async function loadMusicFromSupabase() {
@@ -111,6 +123,7 @@ export async function loadMusicFromSupabase() {
   ]);
 
   let songsRes = songRes;
+
   if (songsRes.error) {
     songsRes = await supabase.from("songs").select(CORE);
   }
@@ -125,13 +138,7 @@ export async function loadMusicFromSupabase() {
     };
   }
 
-  const {
-    artistById,
-    artistImageById,
-    catalogArtists,
-    genreById,
-    catalogGenres,
-  } = buildMaps(artistRes, genrePack.rows);
+  const { artistById, artistImageById, catalogArtists, genreById, catalogGenres, } = buildMaps(artistRes, genrePack.rows);
   const songs = toSongList(
     songsRes.data ?? [],
     artistById,
@@ -166,10 +173,9 @@ async function loadSongsFiltered(eqColumn, eqValue) {
       .select("artist_id, artist_name, artist_image_url"),
     fetchAllGenreRows(),
   ]);
-  const { artistById, artistImageById, genreById } = buildMaps(
-    artistRes,
-    genrePack.rows
-  );
+
+  const { artistById, artistImageById, genreById } = buildMaps(artistRes, genrePack.rows);
+
   const songs = toSongList(
     songRes.data ?? [],
     artistById,
@@ -207,7 +213,7 @@ export async function fetchArtistById(artistId) {
   return { artist: res.data, error: null };
 }
 
-// 0–1 or 0–100 from DB → 0–100 for charts
+// 0-1 or 0-100 from DB → 0-100 for charts
 const METRIC_KEYS = [
   "danceability",
   "energy",
@@ -219,14 +225,19 @@ const METRIC_KEYS = [
 
 function toPercentMetric(v) {
   const n = Number(v);
+
   if (v == null || v === "" || Number.isNaN(n)) return 0;
+
   if (n >= 0 && n <= 1) return n * 100;
+
   return Math.min(100, Math.max(0, n));
 }
 
 function metricsFromRow(row) {
   const o = {};
+
   for (const k of METRIC_KEYS) o[k] = toPercentMetric(row[k]);
+
   return o;
 }
 
@@ -247,30 +258,37 @@ function findRelatedSongs(currentId, currentMetrics, allRows, artistById, limit)
   const top3 = topThreeMetricKeys(currentMetrics);
   const target = sumMetrics(currentMetrics, top3);
   const scored = [];
+
   for (const row of allRows) {
     const sid = row.song_id != null ? String(row.song_id) : "";
+
     if (!sid || sid === String(currentId)) continue;
+
     const m = metricsFromRow(row);
     const sum = sumMetrics(m, top3);
     scored.push({ diff: Math.abs(sum - target), row, sid });
   }
+
   scored.sort((a, b) => a.diff - b.diff);
+
   return scored.slice(0, limit).map(({ row, sid }) => ({
     id: sid,
     title: (row.title != null ? String(row.title) : "").trim() || "Untitled",
     artistName: artistById.get(idKey(row.artist_id)) ?? "",
   }));
+
 }
 
 function yearFromRow(row) {
-  const y =
-    row.year != null && row.year !== "" ? Number(row.year) : null;
+  const y = row.year != null && row.year !== "" ? Number(row.year) : null;
+
   return y != null && !Number.isNaN(y) ? y : null;
 }
 
 // One song + related list (for SingleSong page)
 export async function fetchSongPageData(songId) {
   const id = idKey(songId);
+
   if (!id) {
     return { error: "Missing song.", song: null, related: [], joinNotice: null };
   }
@@ -281,10 +299,8 @@ export async function fetchSongPageData(songId) {
       .select("artist_id, artist_name, artist_image_url"),
     fetchAllGenreRows(),
   ]);
-  const { artistById, artistImageById, genreById } = buildMaps(
-    artistRes,
-    genrePack.rows
-  );
+
+  const { artistById, artistImageById, genreById } = buildMaps(artistRes, genrePack.rows);
   const joinNotice = joinWarnings(artistRes, genrePack);
 
   let songRes = await supabase
@@ -292,6 +308,7 @@ export async function fetchSongPageData(songId) {
     .select(FULL)
     .eq("song_id", id)
     .maybeSingle();
+
   if (songRes.error) {
     songRes = await supabase
       .from("songs")
@@ -308,6 +325,7 @@ export async function fetchSongPageData(songId) {
       joinNotice,
     };
   }
+
   if (!songRes.data) {
     return { error: "Song not found.", song: null, related: [], joinNotice };
   }
@@ -316,6 +334,7 @@ export async function fetchSongPageData(songId) {
   const metrics = metricsFromRow(row);
   const aid = idKey(row.artist_id);
   const gid = idKey(row.genre_id);
+
   const song = {
     id: String(row.song_id),
     title: (row.title != null ? String(row.title) : "").trim() || "Untitled",
@@ -333,9 +352,11 @@ export async function fetchSongPageData(songId) {
 
   let related = [];
   let allRes = await supabase.from("songs").select(FULL);
+
   if (allRes.error) {
     allRes = await supabase.from("songs").select(CORE);
   }
+  
   if (!allRes.error && allRes.data?.length) {
     related = findRelatedSongs(song.id, metrics, allRes.data, artistById, 4);
   }
