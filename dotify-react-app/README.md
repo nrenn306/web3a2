@@ -20,6 +20,23 @@ Browse artists, explore genres, search songs, and create your own playlists.
 - Supabase
 - React Context API
 
---------------------------------------------------------------------------------
+## References 
 
-**Created by Seila and Nicole**
+- Code Radiance. (n.d.). Step-by-step guide to implementing an authentication context in React. YouTube. https://www.youtube.com/watch?v=2-6K-TMA-nw
+
+- CoreUI. (n.d.). How to protect routes in React Router. https://coreui.io/answers/how-to-protect-routes-in-react-router/
+
+- shadcn/ui. (n.d.). Charts component documentation. https://ui.shadcn.com/docs/components/chart
+
+- Mintlify. (n.d.). Supabase React guide. https://www.mintlify.com/supabase/supabase/guides/react
+
+- GeeksforGeeks. (n.d.). Protected Routes in React JS. https://www.geeksforgeeks.org/reactjs/what-are-protected-routes-in-react-js/
+
+- Medium. (n.d.). Manage authentication state in React with AuthContext. https://medium.com/@0xJad/manage-authentication-state-in-react-with-authcontext-2d3129eac92b
+
+- Tailwind Documentation. https://v2.tailwindcss.com/docs
+
+**Note** Some Tailwind styling was assisted by Copilot
+-----
+
+**Authors: Seila and Nicole**

@@ -46,7 +46,7 @@ function About(props) {
 
                 <div className="mb-2">
                     <strong>Technologies Used</strong> 
-                    <p>React, Vite, Tailwind, and Supabase</p>
+                    <p>React, Vite, Tailwind, shadcn, and Supabase</p>
                 </div>
 
                 <div className="mb-2">
