@@ -1,9 +1,15 @@
-// Browser queue for "Current playlist" (header badge + /current-playlist page)
+/**
+ * queueStorage.js stores and manages the current playlist queue in browser localStorage
+ * handles adding/removing songs and notifies the app when queue changes
+ */
 
+// key name for localStorage and event name for queue changes
 export const QUEUE_STORAGE_KEY = "dotify_playlist";
 export const QUEUE_CHANGED_EVENT = "dotify-queue-changed";
 
-// Read how many tracks are queued
+/**
+ * getQueueLength() returns how many songs are in the queue
+ */
 export function getQueueLength() {
   try {
     const raw = localStorage.getItem(QUEUE_STORAGE_KEY);
@@ -18,6 +24,9 @@ export function getQueueLength() {
   }
 }
 
+/**
+ * getQueueItems() returns all songs in the queue
+ */
 export function getQueueItems() {
   try {
     const raw = localStorage.getItem(QUEUE_STORAGE_KEY);
@@ -32,7 +41,9 @@ export function getQueueItems() {
   }
 }
 
-// Replace whole queue (used after edits)
+/**
+ * setQueueItems() replaces entire queue with new items and notifies listeners
+ */
 export function setQueueItems(items) {
   localStorage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(items));
 
@@ -41,14 +52,18 @@ export function setQueueItems(items) {
   }
 }
 
-// Broadcast after manual localStorage writes to dotify_playlist
+/**
+ * notifyQueueChanged() triggers queue changed event for listeners
+ */
 export function notifyQueueChanged() {
   if (typeof window !== "undefined") {
     window.dispatchEvent(new Event(QUEUE_CHANGED_EVENT));
   }
 }
 
-/** Remove every queue entry whose id matches songId (string-normalized). */
+/**
+ * removeSongIdFromQueue() removes song by ID from queue
+ */
 export function removeSongIdFromQueue(songId) {
   try {
     const items = getQueueItems();
