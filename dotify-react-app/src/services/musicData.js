@@ -1,13 +1,19 @@
+/**
+ * musicData.js handles loading and organizing music data from Supabase database
+ * includes functions to fetch songs, artists, genres, and related songs for display in the app
+ * also handles some data conversion and error handling for missing tables or columns
+ */
+
 import supabase from "./supabase";
 
-// Turn DB ids into strings so Map lookups always match
+// convert IDs to text so they match in lookups
 function idKey(v) {
   if (v == null || v === "") return "";
 
   return String(v).trim();
 }
 
-// Load genre rows from genres + genre tables (your DB might use either name)
+// get all genres from database (might be in two different table names)
 export async function fetchAllGenreRows() {
   const [g1, g2] = await Promise.all([
     supabase.from("genres").select("genre_id, genre_name"),
@@ -40,7 +46,7 @@ export async function fetchAllGenreRows() {
   return { rows, error };
 }
 
-// Build lookup maps + sidebar lists from artists + genre rows
+// organize artist and genre data into maps and sorted lists
 function buildMaps(artistRes, genreRows) {
   const artistById = new Map();
   const artistImageById = new Map();
@@ -75,7 +81,7 @@ function buildMaps(artistRes, genreRows) {
   return { artistById, artistImageById, catalogArtists, genreById, catalogGenres };
 }
 
-// Raw song rows + maps -> objects the UI uses
+// convert raw database song rows into display-ready objects
 function toSongList(rows, artistById, genreById, artistImageById = new Map()) {
   return rows
     .map((row) => {
@@ -112,7 +118,7 @@ const FULL = "song_id, title, artist_id, genre_id, year, bpm, energy, danceabili
 const CORE = "song_id, title, artist_id, genre_id, year";
 
 
-// All songs for browse page + artist/genre names for filters
+// get all songs and filter options (artist and genre lists) for browse page
 export async function loadMusicFromSupabase() {
   const [songRes, artistRes, genrePack] = await Promise.all([
     supabase.from("songs").select(FULL),
@@ -156,7 +162,7 @@ export async function loadMusicFromSupabase() {
   };
 }
 
-// Songs where one column matches (artist page or genre page)
+// get songs for one artist or genre
 async function loadSongsFiltered(eqColumn, eqValue) {
   const songRes = await supabase
     .from("songs")
@@ -198,7 +204,7 @@ export function fetchSongsByGenreId(genreId) {
   return loadSongsFiltered("genre_id", genreId);
 }
 
-// Fetch single artist by ID with type info from types table
+// get one artist and their info
 export async function fetchArtistById(artistId) {
   const res = await supabase
     .from("artists")
@@ -213,7 +219,7 @@ export async function fetchArtistById(artistId) {
   return { artist: res.data, error: null };
 }
 
-// 0-1 or 0-100 from DB → 0-100 for charts
+// measurements can be 0-1 or 0-100 from database, convert to 0-100 for charts
 const METRIC_KEYS = [
   "danceability",
   "energy",
@@ -223,6 +229,7 @@ const METRIC_KEYS = [
   "valence",
 ];
 
+// make sure metric value is between 0-100
 function toPercentMetric(v) {
   const n = Number(v);
 
@@ -233,6 +240,7 @@ function toPercentMetric(v) {
   return Math.min(100, Math.max(0, n));
 }
 
+// extract and convert all metrics from one song
 function metricsFromRow(row) {
   const o = {};
 
@@ -241,6 +249,7 @@ function metricsFromRow(row) {
   return o;
 }
 
+// find the 3 highest metric values
 function topThreeMetricKeys(metrics) {
   return [...METRIC_KEYS]
     .map((k) => ({ k, v: metrics[k] ?? 0 }))
@@ -249,11 +258,12 @@ function topThreeMetricKeys(metrics) {
     .map((x) => x.k);
 }
 
+// add up metric values
 function sumMetrics(metrics, keys) {
   return keys.reduce((s, k) => s + (metrics[k] ?? 0), 0);
 }
 
-// Same 3 traits as current song, closest total on other tracks
+// find similar songs (matching same top 3 traits)
 function findRelatedSongs(currentId, currentMetrics, allRows, artistById, limit) {
   const top3 = topThreeMetricKeys(currentMetrics);
   const target = sumMetrics(currentMetrics, top3);
@@ -279,13 +289,14 @@ function findRelatedSongs(currentId, currentMetrics, allRows, artistById, limit)
 
 }
 
+// safely get song year from database
 function yearFromRow(row) {
   const y = row.year != null && row.year !== "" ? Number(row.year) : null;
 
   return y != null && !Number.isNaN(y) ? y : null;
 }
 
-// One song + related list (for SingleSong page)
+// get one song with all details and similar songs list
 export async function fetchSongPageData(songId) {
   const id = idKey(songId);
 

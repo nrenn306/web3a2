@@ -1,25 +1,32 @@
+/**
+ * playlistStorage.js manages user playlists stored in Supabase database and backup in browser localStorage
+ * handles creating/deleting playlists, adding/removing songs, and notifies app when playlists change
+ * also manages target playlist for adding songs from browse page and syncing with playback queue
+ */
+
 import supabase from "./supabase";
 import { notifyQueueChanged, QUEUE_STORAGE_KEY } from "./queueStorage";
 
-// Session key: which playlist receives + from Songs
+// which playlist is selected when user clicks +
 export const TARGET_PLAYLIST_STORAGE_KEY = "dotify_target_playlist_id";
-// Tell UI to refetch playlist data
+// notify page that playlists changed
 export const SAVED_PLAYLIST_STORAGE_EVENT = "dotify-saved-playlists-changed";
-// Session target changed (e.g. user picked another row)
+// notify app that user picked a different playlist
 export const TARGET_PLAYLIST_EVENT = "dotify-target-playlist-changed";
 
-// localStorage: use browser-only tracks when DB junction fails
+// remember if using backup storage (computer memory) instead of database
 const FLAG = "dotify_playlist_junction_local:";
-// localStorage: { userId: { playlistId: [song_id, ...] } }
+// songs for each playlist stored in backup
 const TRACKS = "dotify_playlist_track_ids";
 
+// send update message to page
 function fire() {
   if (typeof window !== "undefined") {
     window.dispatchEvent(new Event(SAVED_PLAYLIST_STORAGE_EVENT));
   }
 }
 
-// Per-user flag: tracks stored in browser, not playlist_songs
+// is user in backup mode?
 function localOn(userId) {
   return (
     userId &&
@@ -28,12 +35,14 @@ function localOn(userId) {
   );
 }
 
+// switch to backup mode
 function setLocalOn(userId) {
   if (userId && typeof window !== "undefined") {
     localStorage.setItem(FLAG + userId, "1");
   }
 }
 
+// load all backup song data
 function getMap() {
   if (typeof window === "undefined") return {};
 
@@ -46,13 +55,14 @@ function getMap() {
 
 }
 
+// save all backup song data
 function setMap(m) {
   if (typeof window !== "undefined") {
     localStorage.setItem(TRACKS, JSON.stringify(m));
   }
 }
 
-// Ordered song ids for one playlist (local mode)
+// get list of song IDs in one playlist (backup)
 function trackList(userId, plId) {
   const a = getMap()[userId]?.[String(plId)];
 
@@ -61,6 +71,7 @@ function trackList(userId, plId) {
   return a.filter((n) => typeof n === "number" && Number.isFinite(n));
 }
 
+// update song list for playlist (backup)
 function setTracks(userId, plId, ids) {
   const m = getMap();
 
@@ -70,6 +81,7 @@ function setTracks(userId, plId, ids) {
   setMap(m);
 }
 
+// add song to playlist (backup). returns true if already there
 function pushTrack(userId, plId, songId) {
   const cur = trackList(userId, plId);
 
@@ -81,6 +93,7 @@ function pushTrack(userId, plId, songId) {
   return { dup: false };
 }
 
+// remove song from playlist (backup)
 function pullTrack(userId, plId, songId) {
   const cur = trackList(userId, plId);
   const next = cur.filter((x) => x !== songId);
@@ -90,6 +103,7 @@ function pullTrack(userId, plId, songId) {
   setTracks(userId, plId, next);
 }
 
+// delete entire playlist (backup)
 function clearTracks(userId, plId) {
   const m = getMap();
 
@@ -102,19 +116,19 @@ function clearTracks(userId, plId) {
   setMap(m);
 }
 
-// Playlist id for UI / session (handles number or string)
+// convert value to text
 function str(v) {
   return v == null || v === "" ? "" : String(v);
 }
 
-// song_id for DB (must be a number)
+// convert to number
 function asNum(id) {
   const n = Number(id);
 
   return Number.isFinite(n) ? n : null;
 }
 
-// playlist_songs missing or wrong type — fall back to local tracks
+// check if database error means we should use backup
 function badPlaylistSongs(e) {
   if (!e) return false;
 
@@ -136,7 +150,7 @@ function badPlaylistSongs(e) {
   return m.includes("bigint") && /[0-9a-f]{8}-/.test(m);
 }
 
-// Append song id locally; optionally turn on local-only mode
+// save song to backup and notify if needed
 function addSongLocal(userId, plId, songId, turnOnFlag) {
   if (turnOnFlag) setLocalOn(userId);
 
@@ -146,7 +160,7 @@ function addSongLocal(userId, plId, songId, turnOnFlag) {
   return { error: null, duplicate: dup };
 }
 
-// Build song rows for UI from numeric song_ids
+// get full song info (title, artist, year) from song IDs
 async function rowsFromSongIds(orderIds) {
   const ids = [...new Set(orderIds.filter((x) => x != null))];
 
@@ -197,7 +211,7 @@ async function rowsFromSongIds(orderIds) {
   return out;
 }
 
-// Insert failed because playlists.id had no default
+// check if error is about missing playlist ID
 function nullIdError(e) {
   const m = (e?.message || "").toLowerCase();
 
@@ -211,12 +225,12 @@ function nullIdError(e) {
   );
 }
 
-// Client id when DB expects uuid/text
+// make a random unique ID for new playlist
 function randomId() {
   return typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : "id-" + Date.now() + "-" + Math.random().toString(16).slice(2);
 }
 
-// Next bigint id when table has no identity
+// find next available playlist ID number
 async function nextPlaylistId() {
   const { data, error } = await supabase
     .from("playlists")
@@ -232,7 +246,7 @@ async function nextPlaylistId() {
   return Number.isFinite(n) && n >= 0 ? n + 1 : 1;
 }
 
-// Names + song counts for this user
+// get all playlists for user with song counts
 export async function getPlaylists(userId) {
   if (!userId) return [];
 
@@ -248,7 +262,7 @@ export async function getPlaylists(userId) {
 
   if (!list.length) return [];
 
-  // Song counts from browser only
+  // use backup song counts
   if (localOn(userId)) {
     return list.map((p) => ({
       id: str(p.id),
@@ -257,7 +271,7 @@ export async function getPlaylists(userId) {
     }));
   }
 
-  // Song counts from playlist_songs
+  // get song counts from database
   const { data: ps, error: psErr } = await supabase
     .from("playlist_songs")
     .select("playlist_id")
@@ -287,7 +301,7 @@ export async function getPlaylists(userId) {
   });
 }
 
-// Songs in one playlist (order preserved)
+// get all songs in one playlist
 export async function getPlaylistSongs(userId, playlistId) {
   if (!userId || !playlistId) return [];
 
@@ -311,7 +325,7 @@ export async function getPlaylistSongs(userId, playlistId) {
   return rowsFromSongIds(ps.map((r) => r.song_id));
 }
 
-// New row in playlists
+// make a new playlist
 export async function createPlaylist(userId, name) {
   if (!userId) return { playlist: null, error: "You must be logged in." };
 
@@ -332,7 +346,7 @@ export async function createPlaylist(userId, name) {
       .single();
   }
 
-  // Or bigint without identity
+  // try next number if random ID didn't work
   if (res.error && fix) {
     const nid = await nextPlaylistId();
 
@@ -361,7 +375,7 @@ export async function createPlaylist(userId, name) {
   };
 }
 
-// Remove playlist row (+ local track list)
+// delete a playlist
 export async function deletePlaylist(userId, playlistId) {
 
   if (!userId) return { error: "You must be logged in." };
@@ -379,7 +393,7 @@ export async function deletePlaylist(userId, playlistId) {
   return { error: null };
 }
 
-// Remove one song from a playlist
+// remove a song from playlist
 export async function removeSongFromPlaylist(userId, playlistId, songId) {
   if (!userId) return { error: "You must be logged in." };
 
@@ -414,7 +428,7 @@ export async function removeSongFromPlaylist(userId, playlistId, songId) {
   return { error: null };
 }
 
-// Add one song to a playlist (Supabase or local)
+// add a song to playlist (won't add if already there)
 export async function addSongToPlaylist(userId, playlistId, song) {
   if (!userId) return { error: "Not logged in.", duplicate: false };
 
@@ -460,7 +474,7 @@ export async function addSongToPlaylist(userId, playlistId, song) {
   return { error: null, duplicate: false };
 }
 
-// + button: playlist + playback queue
+// add song to playlist and queue when user clicks +
 export async function addSongToPlaylistWithQueue(userId, song) {
   const target = typeof sessionStorage !== "undefined" ? sessionStorage.getItem(TARGET_PLAYLIST_STORAGE_KEY) : null;
 

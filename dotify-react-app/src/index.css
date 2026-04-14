@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+/*  styling to stay consistent by using reusable variables */
+
 :root {
   /* Brand Colors */
   --blue: #30BCED;
@@ -15,7 +17,7 @@
   --muted: var(--dark);
   --danger: var(--red);
 
-  /* Typography */
+  /* typography */
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
 
   font-family: var(--sans);
@@ -23,12 +25,12 @@
   background-color: var(--bg);
 }
 
-/* Reset */
+/* reset */
 body {
   margin: 0;
 }
 
-/* Optional root layout */
+/* ensure the app takes full height and allows for flex layout */
 #root {
   min-height: 100vh;
   display: flex;

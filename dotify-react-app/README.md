@@ -1,16 +1,42 @@
-# React + Vite
+# Dotify
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A music discovery and playlist management web app. 
+Browse artists, explore genres, search songs, and create your own playlists.
 
-Currently, two official plugins are available:
+## What We Built
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Artists** - Browse all artists and view their details
+- **Genres** - Explore music by genre categories
+- **Songs** - Search and filter songs with advanced filtering options
+- **Song Analytics** - View detailed song characteristics with radar charts
+- **Playlists** - Create and manage personalized playlists
+- **User Authentication** - Secure login to save your playlists
 
-## React Compiler
+## What We Used
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- Vite
+- Tailwind CSS
+- Supabase
+- React Context API
 
-## Expanding the ESLint configuration
+## References 
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Code Radiance. (n.d.). Step-by-step guide to implementing an authentication context in React. YouTube. https://www.youtube.com/watch?v=2-6K-TMA-nw
+
+- CoreUI. (n.d.). How to protect routes in React Router. https://coreui.io/answers/how-to-protect-routes-in-react-router/
+
+- shadcn/ui. (n.d.). Charts component documentation. https://ui.shadcn.com/docs/components/chart
+
+- Mintlify. (n.d.). Supabase React guide. https://www.mintlify.com/supabase/supabase/guides/react
+
+- GeeksforGeeks. (n.d.). Protected Routes in React JS. https://www.geeksforgeeks.org/reactjs/what-are-protected-routes-in-react-js/
+
+- Medium. (n.d.). Manage authentication state in React with AuthContext. https://medium.com/@0xJad/manage-authentication-state-in-react-with-authcontext-2d3129eac92b
+
+- Tailwind Documentation. https://v2.tailwindcss.com/docs
+
+**Note** Some Tailwind styling was assisted by Copilot
+-----
+
+**Authors: Seila and Nicole**

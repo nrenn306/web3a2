@@ -6,7 +6,7 @@
  * @param {Function} onClose - callback function triggered when the modal is closed
  */
 import { useEffect, useRef } from 'react';
-import dotifylogo from '../assets/dotifylogo.png';
+import dotifylogo from '../assets/dotifyLogo.png';
 
 function About(props) {
 
@@ -59,7 +59,7 @@ function About(props) {
                 {/* tech used */}
                 <div className="mb-2">
                     <strong>Technologies Used</strong> 
-                    <p>React, Vite, Tailwind, and Supabase</p>
+                    <p>React, Vite, Tailwind, shadcn, and Supabase</p>
                 </div>
 
                 {/* team members */}
@@ -71,8 +71,8 @@ function About(props) {
                 {/* github link */}
                 <div className="mb-6">
                     <strong>GitHub Link</strong>
-                    <a href="https://github.com" className="text-[var(--accent)] no-underline ml-2">
-                        <p>TO DO ADD LINK</p>
+                    <a href="https://github.com/nrenn306/web3a2" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] no-underline ml-2">
+                        <p>github.com/nrenn306/web3a2</p>
                     </a>
                 </div>
 

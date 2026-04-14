@@ -1,3 +1,10 @@
+/**
+ * Songs.jsx is the main page for browsing songs in the Dotify app
+ * it loads all songs from the database, allows filtering by title, artist, year, and genre
+ * and displays results in a table with options to add songs to the playlist
+ * it also shows loading states and errors about the music when fetching from the database
+ */
+
 import { useEffect, useMemo, useState } from "react";
 
 import SongFilterChips from "../components/SongFilterChips";
@@ -8,7 +15,7 @@ import { PlaylistToast, usePlaylistToast } from "../components/PlaylistToast";
 import { loadMusicFromSupabase } from "../services/musicData";
 
 function Songs() {
-  // From Supabase
+  // data loaded from database
   const [songs, setSongs] = useState([]);
   const [loadState, setLoadState] = useState("loading");
   const [loadError, setLoadError] = useState(null);
@@ -16,7 +23,7 @@ function Songs() {
   const [catalogArtists, setCatalogArtists] = useState([]);
   const [catalogGenres, setCatalogGenres] = useState([]);
 
-  // Sidebar + chips state
+  // what filters are selected right now
   const [titleQuery, setTitleQuery] = useState("");
   const [selectedYears, setSelectedYears] = useState(() => new Set());
   const [selectedArtistNames, setSelectedArtistNames] = useState(
@@ -27,7 +34,7 @@ function Songs() {
   const [sortBy, setSortBy] = useState("title");
   const { toast, addToPlaylist } = usePlaylistToast();
 
-  // Flip one value in a Set used for filters
+  // add or remove one value from a filter set
   function toggleSet(setState, value) {
     setState((prev) => {
       const next = new Set(prev);
@@ -39,7 +46,7 @@ function Songs() {
     });
   }
 
-  // Fetch songs, artists, genres once
+  // load all songs when page opens
   useEffect(() => {
     let cancelled = false;
 
@@ -76,7 +83,7 @@ function Songs() {
 
   }, []);
 
-  // Filter sidebar option lists
+  // make lists of years, artists, and genres for the filter sidebar
   const years = useMemo(() =>
     [...new Set(songs.map((s) => s.year).filter((y) => y != null && !Number.isNaN(y))),].sort((a, b) => a - b),[songs]
   );
@@ -109,7 +116,7 @@ function Songs() {
   );
 
 
-  // Apply sidebar filters + sort
+  // filter and sort songs based on what user picked
   const filteredSorted = useMemo(() => {
     const q = titleQuery.trim().toLowerCase();
 
@@ -170,7 +177,7 @@ function Songs() {
     sortBy,
   ]);
 
-  // Active filters shown as removable chips
+  // build chips (removable filter tags) from active filters
   const chips = [];
 
   if (titleQuery.trim()) {
@@ -214,7 +221,7 @@ function Songs() {
 
   const hasActiveFilters = Boolean(titleQuery.trim()) || selectedYears.size > 0 || selectedArtistNames.size > 0 || selectedGenres.size > 0;
 
-  // Filters left, results + table right
+  // show filters on left, song results on right
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
       <div className="flex min-h-[28rem] flex-col overflow-hidden rounded-lg border border-gray-200 bg-white lg:flex-row">
