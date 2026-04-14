@@ -1,18 +1,27 @@
-/** Page title, optional data notice, and sort control for the Songs browse view. */
+/**
+ * SongBrowseHeader component to display header section for songs browse page
+ * 
+ * props:
+ * @param {string|null} loadNotice - optional message to display (ex. partial data warning)
+ * @param {string} sortBy - current selected sort option
+ * @param {Function} onSortChange - callback triggered when sort option changes
+ */
 function SongsBrowseHeader({ loadNotice, sortBy, onSortChange }) {
   return (
     <>
+    {/* page title */}
       <header className="mb-6 text-center">
         <h1 className="text-2xl font-bold text-[var(--dark)] sm:text-3xl">Songs</h1>
       </header>
 
-      {/* e.g. partial join warning from loader */}
+      {/* optional notice */}
       {loadNotice ? (
         <div role="alert" className="mb-4 rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
           {loadNotice}
         </div>
       ) : null}
 
+      {/* sort control */}
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
         <label className="inline-flex items-center gap-2 text-sm sm:ml-auto">
           <span className="text-[var(--dark)]">Sort by</span>

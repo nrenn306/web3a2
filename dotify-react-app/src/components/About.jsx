@@ -1,12 +1,17 @@
 /**
  * About popup showing information and git link
+ * 
+ * props:
+ * @param {boolean} isOpen - controls whether the modal is open or closed
+ * @param {Function} onClose - callback function triggered when the modal is closed
  */
 import { useEffect, useRef } from 'react';
 import dotifylogo from '../assets/dotifyLogo.png';
 
 function About(props) {
 
-    const aboutPop = useRef(null);
+    const aboutPop = useRef(null); // reference to dialog element 
+
     const isOpen = props.isOpen;
     const onClose = props.onClose;
 
@@ -14,6 +19,7 @@ function About(props) {
     useEffect(() => {
 
         const popUp = aboutPop.current;
+
         if (!popUp) {
             return;
         }
@@ -22,6 +28,7 @@ function About(props) {
 
     }, [isOpen]);
 
+    
     // handle close when close or x are clicked
     const handleClose = () => {
         if (aboutPop.current) {
@@ -33,27 +40,35 @@ function About(props) {
     return (
         <dialog ref={aboutPop} className="p-8 rounded border border-[var(--muted)] shadow-2xl max-w-sm w-90 bg-[var(--dark)] text-white" style={{ margin: 'auto', top: '50%', transform: 'translateY(-50%)' }}>
             
+            {/* close (x) button */}
             <button onClick={handleClose} className="absolute top-4 right-4 bg-transparent border-none text-2xl cursor-pointer text-white p-0 w-8 h-8 flex items-center justify-center">
                 ×
             </button>
 
+            {/* app logo */}
             <img src={dotifylogo} alt="Dotify Logo" className="absolute top-4 left-4 h-20 w-20 rounded-full" />
+            
             <div className="pl-4">
+                {/* title */}
                 <h1 className="text-2xl font-bold text-[var(--accent)] mb-4 mt-16">About Dotify</h1>   
+                {/* description */}
                 <h2 className="mb-4 text-white">
                     This app is a music discovery platform.
                 </h2>
 
+                {/* tech used */}
                 <div className="mb-2">
                     <strong>Technologies Used</strong> 
                     <p>React, Vite, Tailwind, shadcn, and Supabase</p>
                 </div>
 
+                {/* team members */}
                 <div className="mb-2">
                     <strong>Group Members</strong>
                     <p>Nicole Rennie & Seila Kennedy</p>
                 </div>
 
+                {/* github link */}
                 <div className="mb-6">
                     <strong>GitHub Link</strong>
                     <a href="https://github.com/nrenn306/web3a2" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] no-underline ml-2">
@@ -61,6 +76,7 @@ function About(props) {
                     </a>
                 </div>
 
+                {/* close button */}
                 <button onClick={handleClose} className="bg-[var(--accent)] text-[var(--black)] px-2 py-1 rounded cursor-pointer font-normal no-underline hover:text-white transition-colors">
                     Close
                 </button>
