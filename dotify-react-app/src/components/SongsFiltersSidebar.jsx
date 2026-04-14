@@ -1,4 +1,20 @@
-// Left column: search + checkbox filters for browse page
+/**
+ * SongFiltersSidebar component to display the left sidebar for filtering songs in browse view
+ * 
+ * props:
+ * @param {Array<Object>} songs - list of songs used for title suggestions
+ * @param {string} titleQuery - current title search query
+ * @param {Function} onTitleQueryChange - updates title search query
+ * @param {Array<number>} years - available years for filtering
+ * @param {Set<number>} selectedYears - selected year filters
+ * @param {Function} onToggleYear - toggles a year filter
+ * @param {Array<string>} artistFilterNames - available artist names
+ * @param {Set<string>} selectedArtistNames - selected artist filters
+ * @param {Function} onToggleArtistName - toggles an artist filter
+ * @param {Array<string>} genreFilterOptions - available genre options
+ * @param {Set<string>} selectedGenres - selected genre filters
+ * @param {Function} onToggleGenre - toggles a genre filter
+ */
 function SongsFiltersSidebar({
   songs,
   titleQuery,
@@ -15,10 +31,13 @@ function SongsFiltersSidebar({
 }) {
   return (
     <aside className="w-full shrink-0 border-b border-gray-200 bg-gray-50 p-4 lg:w-72 lg:border-b-0 lg:border-r">
+
+      {/* sidebar title */}
       <h2 className="mb-4 text-lg font-bold text-[var(--dark)]">Filters</h2>
 
       <div className="space-y-5">
-        {/* Live title search + datalist */}
+
+        {/* title search with suggestions */}
         <div>
           <label className="mb-1 block text-sm text-[var(--muted)]">Title</label>
           <div className="relative">
@@ -31,11 +50,14 @@ function SongsFiltersSidebar({
               list="song-title-hints"
             />
 
+            {/* autocomplete suggestions */}
             <datalist id="song-title-hints">
               {songs.map((s) => (
                 <option key={s.id} value={s.title} />
               ))}
             </datalist>
+
+            {/* clear search button */}
             {titleQuery ? (
               <button
                 type="button"
@@ -46,26 +68,33 @@ function SongsFiltersSidebar({
                 ×
               </button>
             ) : null}
+
+            {/* dropdown indicator */}
             <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400" aria-hidden>▾</span>
           </div>
         </div>
 
 
+        {/* year filter */}
         <fieldset className="space-y-1 rounded border border-gray-200 bg-white p-3">
           <legend className="mb-1 px-1 text-sm font-medium text-[var(--muted)]">Years</legend>
           <ul className="max-h-40 space-y-1 overflow-y-auto pr-1">
+
             {years.map((y) => (
               <li key={y} className="flex items-center gap-2 rounded px-1 py-0.5 hover:bg-gray-50">
                 <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-sm text-[var(--text)]">
+                  
                   <input
                     type="checkbox"
                     checked={selectedYears.has(y)}
                     onChange={() => onToggleYear(y)}
                     className="size-4 rounded border-gray-300 text-[var(--accent)]"
                   />
+
                   <span className={selectedYears.has(y) ? "font-semibold text-[var(--dark)]" : ""}>{y}</span>
                 </label>
 
+                {/* remove selected year */}
                 {selectedYears.has(y) ? (
                   <button
                     type="button"
@@ -82,25 +111,30 @@ function SongsFiltersSidebar({
         </fieldset>
 
 
-        {/* Artist name checkboxes */}
+        {/* artist filter */}
         <fieldset className="space-y-1 rounded border border-gray-200 bg-white p-3">
           <legend className="mb-1 px-1 text-sm font-medium text-[var(--muted)]">Artists</legend>
+
           {artistFilterNames.length === 0 ? (
             <p className="px-1 py-1 text-sm text-[var(--muted)]">No artists available to filter.</p>
           ) : (
             <ul className="max-h-44 space-y-1 overflow-y-auto pr-1">
+
               {artistFilterNames.map((name) => (
                 <li key={name} className="flex items-center gap-2 rounded px-1 py-0.5 hover:bg-gray-50">
                   <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-sm text-[var(--text)]">
+                    
                     <input
                       type="checkbox"
                       checked={selectedArtistNames.has(name)}
                       onChange={() => onToggleArtistName(name)}
                       className="size-4 rounded border-gray-300 text-[var(--accent)]"
                     />
+
                     <span className={selectedArtistNames.has(name) ? "font-semibold text-[var(--dark)]" : ""}>{name}</span>
                   </label>
 
+                  {/* remove selected artist */}
                   {selectedArtistNames.has(name) ? (
                     <button
                       type="button"
@@ -118,7 +152,7 @@ function SongsFiltersSidebar({
         </fieldset>
 
 
-        {/* Genre checkboxes */}
+        {/* genre filter */}
         <fieldset className="space-y-1 rounded border border-gray-200 bg-white p-3">
           <legend className="mb-1 px-1 text-sm font-medium text-[var(--muted)]">Genres</legend>
 
@@ -126,18 +160,22 @@ function SongsFiltersSidebar({
             <p className="px-1 py-1 text-sm text-[var(--muted)]">No genres available to filter.</p>
           ) : (
             <ul className="max-h-44 space-y-1 overflow-y-auto pr-1">
+
               {genreFilterOptions.map((g) => (
                 <li key={g} className="flex items-center gap-2 rounded px-1 py-0.5 hover:bg-gray-50">
                   <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-sm text-[var(--text)]">
+                    
                     <input
                       type="checkbox"
                       checked={selectedGenres.has(g)}
                       onChange={() => onToggleGenre(g)}
                       className="size-4 rounded border-gray-300 text-[var(--accent)]"
                     />
+
                     <span className={selectedGenres.has(g) ? "font-semibold text-[var(--dark)]" : ""}>{g}</span>
                   </label>
                   
+                  {/* remove selected genre */}
                   {selectedGenres.has(g) ? (
                     <button
                       type="button"
